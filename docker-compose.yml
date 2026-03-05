@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: ekonaryn-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ekonaryn
+      POSTGRES_PASSWORD: ekonaryn_pass
+      POSTGRES_DB: ekonaryn
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ekonaryn']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: ekonaryn-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@ekonaryn.kg
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - '5050:80'
+    depends_on:
+      - postgres
+
+  api:
+    build:
+      context: .
+      dockerfile: packages/api/Dockerfile
+    container_name: ekonaryn-api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://ekonaryn:ekonaryn_pass@postgres:5432/ekonaryn
+      JWT_SECRET: change-this-in-production
+      JWT_REFRESH_SECRET: change-this-refresh-in-production
+      API_PORT: 4000
+    ports:
+      - '4000:4000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - api_uploads:/app/uploads
+
+volumes:
+  postgres_data:
+  api_uploads:

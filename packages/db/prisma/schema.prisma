@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id          String          @id @default(uuid())
+  name        String
+  phone       String          @unique
+  password    String
+  role        String          @default("RESIDENT")
+  address     String?
+  points      Int             @default(0)
+  createdAt   DateTime        @default(now())
+  collections Collection[]
+  requests    PickupRequest[]
+  routes      Route[]
+  trips       Trip[]
+}
+
+model Material {
+  id           String          @id @default(uuid())
+  name         String
+  nameKy       String
+  nameRu       String
+  buyingPrice  Float
+  sellingPrice Float
+  unit         String          @default("kg")
+  description  String?
+  imageUrl     String?
+  requests     PickupRequest[]
+  collections  Collection[]
+}
+
+model PickupRequest {
+  id           String      @id @default(uuid())
+  resident     User        @relation(fields: [residentId], references: [id])
+  residentId   String
+  material     Material    @relation(fields: [materialId], references: [id])
+  materialId   String
+  address      String
+  estimatedQty Float
+  status       String      @default("PENDING")
+  notes        String?
+  createdAt    DateTime    @default(now())
+  collection   Collection?
+}
+
+model Collection {
+  id             String        @id @default(uuid())
+  worker         User          @relation(fields: [workerId], references: [id])
+  workerId       String
+  request        PickupRequest @relation(fields: [requestId], references: [id])
+  requestId      String        @unique
+  material       Material      @relation(fields: [materialId], references: [id])
+  materialId     String
+  actualWeightKg Float
+  photoUrl       String?
+  notes          String?
+  collectedAt    DateTime      @default(now())
+  trip           Trip?         @relation(fields: [tripId], references: [id])
+  tripId         String?
+}
+
+model Trip {
+  id            String       @id @default(uuid())
+  worker        User         @relation(fields: [workerId], references: [id])
+  workerId      String
+  date          DateTime
+  destination   String       @default("Bishkek")
+  totalWeightKg Float        @default(0)
+  transportCost Float        @default(0)
+  revenue       Float        @default(0)
+  collections   Collection[]
+  createdAt     DateTime     @default(now())
+}
+
+model Route {
+  id        String   @id @default(uuid())
+  worker    User     @relation(fields: [workerId], references: [id])
+  workerId  String
+  date      DateTime
+  stops     String
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+}
+
+model FinancialRecord {
+  id          String   @id @default(uuid())
+  type        String
+  amount      Float
+  description String
+  category    String?
+  date        DateTime
+  createdAt   DateTime @default(now())
+}
+
+model Schedule {
+  id        String  @id @default(uuid())
+  area      String
+  dayOfWeek Int
+  time      String
+  active    Boolean @default(true)
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  body      String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}

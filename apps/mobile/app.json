@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "Эко Нарын",
+    "slug": "ekonaryn",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "ekonaryn",
+    "splash": {
+      "backgroundColor": "#1B5E20"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "kg.ekonaryn.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#1B5E20"
+      },
+      "package": "kg.ekonaryn.app"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-camera",
+      "expo-notifications",
+      "expo-image-picker",
+      "expo-secure-store"
+    ]
+  }
+}
