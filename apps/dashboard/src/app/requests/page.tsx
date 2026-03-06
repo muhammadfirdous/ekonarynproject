@@ -48,7 +48,7 @@ export default function RequestsPage() {
       cell: ({ row }) => (
         <div>
           <p className="font-medium">{row.original.resident?.name}</p>
-          <p className="text-xs text-eco-gray">{row.original.resident?.phone}</p>
+          <p className="text-xs text-neutral-500">{row.original.resident?.phone}</p>
         </div>
       ),
     },
@@ -74,11 +74,11 @@ export default function RequestsPage() {
       cell: ({ row }) => {
         const s = row.original.status;
         return (
-          <div className="flex gap-1">
+          <div className="flex gap-1.5">
             {s === 'PENDING' && (
               <button
                 onClick={() => updateStatus(row.original.id, 'ASSIGNED')}
-                className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded hover:bg-blue-100"
+                className="text-xs bg-blue-50 text-blue-700 px-2.5 py-1 rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors font-medium"
               >
                 Назначить
               </button>
@@ -86,7 +86,7 @@ export default function RequestsPage() {
             {s === 'ASSIGNED' && (
               <button
                 onClick={() => updateStatus(row.original.id, 'COMPLETED')}
-                className="text-xs bg-green-50 text-green-700 px-2 py-1 rounded hover:bg-green-100"
+                className="text-xs bg-green-50 text-green-700 px-2.5 py-1 rounded-lg border border-green-200 hover:bg-green-100 transition-colors font-medium"
               >
                 Завершить
               </button>
@@ -94,7 +94,7 @@ export default function RequestsPage() {
             {(s === 'PENDING' || s === 'ASSIGNED') && (
               <button
                 onClick={() => updateStatus(row.original.id, 'CANCELLED')}
-                className="text-xs bg-red-50 text-red-700 px-2 py-1 rounded hover:bg-red-100"
+                className="text-xs bg-red-50 text-red-700 px-2.5 py-1 rounded-lg border border-red-200 hover:bg-red-100 transition-colors font-medium"
               >
                 Отменить
               </button>
@@ -114,8 +114,8 @@ export default function RequestsPage() {
           <button
             key={s}
             onClick={() => setFilter(s)}
-            className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
-              filter === s ? 'bg-primary text-white' : 'bg-white border border-gray-200 text-eco-gray hover:bg-gray-50'
+            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-150 ${
+              filter === s ? 'bg-brand-700 text-white' : 'bg-white border border-neutral-200 text-neutral-500 hover:bg-neutral-50'
             }`}
           >
             {s === '' ? 'Все' : { PENDING: 'Ожидают', ASSIGNED: 'Назначены', COMPLETED: 'Завершены', CANCELLED: 'Отменены' }[s]}
@@ -124,7 +124,7 @@ export default function RequestsPage() {
       </div>
 
       {loading ? (
-        <div className="bg-white rounded-card p-8 animate-pulse h-96" />
+        <div className="bg-white rounded-2xl p-8 animate-pulse h-96" />
       ) : (
         <DataTable columns={columns} data={data || []} searchPlaceholder="Поиск по заявкам..." />
       )}

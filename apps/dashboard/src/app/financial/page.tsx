@@ -90,7 +90,7 @@ export default function FinancialPage() {
         title="Финансы"
         description="Учет доходов и расходов"
         action={
-          <button onClick={() => setShowForm(!showForm)} className="inline-flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-light">
+          <button onClick={() => setShowForm(!showForm)} className="inline-flex items-center gap-2 bg-brand-700 text-white px-4 py-2 rounded-lg hover:bg-brand-900">
             <Plus className="h-4 w-4" /> Новая запись
           </button>
         }
@@ -110,26 +110,26 @@ export default function FinancialPage() {
       )}
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="bg-white rounded-card border border-gray-100 shadow-sm p-6 mb-6">
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6 mb-6">
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
               <label className="block text-sm font-medium mb-1.5">Тип</label>
-              <select value={form.type} onChange={(e) => setForm((f) => ({ ...f, type: e.target.value }))} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg">
+              <select value={form.type} onChange={(e) => setForm((f) => ({ ...f, type: e.target.value }))} className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg">
                 <option value="INCOME">Доход</option>
                 <option value="EXPENSE">Расход</option>
               </select>
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5">Сумма (сом)</label>
-              <input type="number" min="1" value={form.amount} onChange={(e) => setForm((f) => ({ ...f, amount: e.target.value }))} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg" required />
+              <input type="number" min="1" value={form.amount} onChange={(e) => setForm((f) => ({ ...f, amount: e.target.value }))} className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg" required />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5">Описание</label>
-              <input value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg" required />
+              <input value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg" required />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5">Категория</label>
-              <select value={form.category} onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg">
+              <select value={form.category} onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))} className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg">
                 <option value="">Без категории</option>
                 <option value="sales">Продажи</option>
                 <option value="transport">Транспорт</option>
@@ -143,18 +143,18 @@ export default function FinancialPage() {
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5">Дата</label>
-              <input type="date" value={form.date} onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg" required />
+              <input type="date" value={form.date} onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))} className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg" required />
             </div>
           </div>
           <div className="flex gap-3">
-            <button type="submit" disabled={saving} className="bg-primary text-white px-6 py-2 rounded-lg disabled:opacity-50">{saving ? 'Сохранение...' : 'Сохранить'}</button>
-            <button type="button" onClick={() => setShowForm(false)} className="px-6 py-2 border border-gray-200 rounded-lg">Отмена</button>
+            <button type="submit" disabled={saving} className="bg-brand-700 text-white px-6 py-2 rounded-lg disabled:opacity-50">{saving ? 'Сохранение...' : 'Сохранить'}</button>
+            <button type="button" onClick={() => setShowForm(false)} className="px-6 py-2 border border-neutral-200 rounded-lg">Отмена</button>
           </div>
         </form>
       )}
 
       {loading ? (
-        <div className="bg-white rounded-card p-8 animate-pulse h-96" />
+        <div className="bg-white rounded-2xl p-8 animate-pulse h-96" />
       ) : (
         <DataTable columns={columns} data={records || []} searchPlaceholder="Поиск по записям..." />
       )}

@@ -63,7 +63,7 @@ export default function CollectionsPage() {
         action={
           <Link
             href="/collections/new"
-            className="inline-flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-light transition-colors"
+            className="inline-flex items-center gap-2 bg-brand-700 text-white px-4 py-2 rounded-xl hover:bg-brand-900 hover:-translate-y-[1px] transition-all duration-200"
           >
             <Plus className="h-4 w-4" />
             Новый сбор
@@ -71,7 +71,7 @@ export default function CollectionsPage() {
         }
       />
       {loading ? (
-        <div className="bg-white rounded-card p-8 animate-pulse h-96" />
+        <div className="bg-white rounded-2xl p-8 animate-pulse h-96" />
       ) : (
         <DataTable columns={columns} data={data || []} searchPlaceholder="Поиск по сборам..." />
       )}

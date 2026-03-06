@@ -27,54 +27,58 @@ export default function LoginPage() {
     }
   };
 
+  const inputClass = 'w-full px-4 py-2.5 bg-white border border-neutral-200 rounded-xl text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors';
+
   return (
-    <div className="min-h-screen bg-eco-bg flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-2xl mb-4">
-            <Recycle className="h-8 w-8 text-white" />
+          <div className="inline-flex items-center justify-center w-14 h-14 bg-brand-700 rounded-2xl mb-4 shadow-lg shadow-brand-900/20">
+            <Recycle className="h-7 w-7 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-eco-text">Эко Нарын</h1>
-          <p className="text-eco-gray mt-1">Панель управления</p>
+          <h1 className="text-2xl font-bold text-neutral-900">Эко Нарын</h1>
+          <p className="text-neutral-500 mt-1 text-sm">Панель управления</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-card shadow-sm border border-gray-100 p-8">
-          <h2 className="text-lg font-semibold text-eco-text mb-6">Вход в систему</h2>
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-card border border-neutral-100 p-8">
+          <h2 className="text-lg font-semibold text-neutral-900 mb-6">Вход в систему</h2>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
               {error}
             </div>
           )}
 
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-eco-text mb-1.5">Телефон</label>
-            <input
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="+996700000001"
-              className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-              required
-            />
-          </div>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 mb-1.5">Телефон</label>
+              <input
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="+996700000001"
+                className={inputClass}
+                required
+              />
+            </div>
 
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-eco-text mb-1.5">Пароль</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••"
-              className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-              required
-            />
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 mb-1.5">Пароль</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••"
+                className={inputClass}
+                required
+              />
+            </div>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-primary text-white py-2.5 rounded-lg font-medium hover:bg-primary-light transition-colors disabled:opacity-50"
+            className="w-full mt-6 bg-brand-700 text-white py-2.5 rounded-xl font-semibold hover:bg-brand-900 hover:-translate-y-[1px] transition-all duration-200 disabled:opacity-50 disabled:hover:translate-y-0"
           >
             {loading ? 'Вход...' : 'Войти'}
           </button>

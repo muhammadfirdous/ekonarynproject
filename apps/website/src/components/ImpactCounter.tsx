@@ -33,37 +33,65 @@ function useCountUp(target: number, duration = 2000) {
   return { count, ref };
 }
 
+const stats = [
+  {
+    icon: Recycle,
+    target: 5000,
+    suffix: '',
+    label: 'КГ МАТЕРИАЛОВ СОБРАНО',
+  },
+  {
+    icon: TreePine,
+    target: 85,
+    suffix: '',
+    label: 'ДЕРЕВЬЕВ СОХРАНЕНО',
+  },
+  {
+    icon: Droplets,
+    target: 12000,
+    suffix: '',
+    label: 'ЛИТРОВ ВОДЫ СЭКОНОМЛЕНО',
+  },
+];
+
 export default function ImpactCounter() {
-  const kg = useCountUp(5000);
-  const trees = useCountUp(85);
-  const water = useCountUp(12000);
+  const counters = stats.map((s) => useCountUp(s.target));
 
   return (
-    <section className="bg-primary py-16">
-      <div className="max-w-6xl mx-auto px-4">
-        <h2 className="text-2xl font-bold text-white text-center mb-10">Наш вклад</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div ref={kg.ref} className="text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-white/10 rounded-2xl mb-4">
-              <Recycle className="h-8 w-8 text-accent" />
-            </div>
-            <p className="text-4xl font-bold text-white">{kg.count.toLocaleString()}</p>
-            <p className="text-white/70 mt-1">кг материалов собрано</p>
-          </div>
-          <div ref={trees.ref} className="text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-white/10 rounded-2xl mb-4">
-              <TreePine className="h-8 w-8 text-accent" />
-            </div>
-            <p className="text-4xl font-bold text-white">{trees.count}</p>
-            <p className="text-white/70 mt-1">деревьев сохранено</p>
-          </div>
-          <div ref={water.ref} className="text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-white/10 rounded-2xl mb-4">
-              <Droplets className="h-8 w-8 text-accent" />
-            </div>
-            <p className="text-4xl font-bold text-white">{water.count.toLocaleString()}</p>
-            <p className="text-white/70 mt-1">литров воды сэкономлено</p>
-          </div>
+    <section className="relative bg-brand-900 py-20 overflow-hidden">
+      {/* Subtle diagonal pattern overlay */}
+      <div
+        className="absolute inset-0 opacity-[0.04]"
+        style={{
+          backgroundImage: `repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 10px,
+            white 10px,
+            white 11px
+          )`,
+        }}
+      />
+
+      <div className="relative max-w-6xl mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          {stats.map((stat, i) => {
+            const Icon = stat.icon;
+            const counter = counters[i];
+            return (
+              <div key={i} ref={counter.ref} className="text-center">
+                <div className="inline-flex items-center justify-center w-14 h-14 bg-white/10 rounded-2xl mb-5 backdrop-blur-sm">
+                  <Icon className="h-7 w-7 text-brand-300" />
+                </div>
+                <p className="text-5xl font-bold text-white tracking-tight">
+                  {counter.count.toLocaleString()}
+                </p>
+                <p className="text-brand-300 text-sm font-medium uppercase tracking-wider mt-2">
+                  {stat.label}
+                </p>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

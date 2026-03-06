@@ -11,7 +11,7 @@ import {
   SortingState,
 } from '@tanstack/react-table';
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight, ChevronsUpDown } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronsUpDown, Search } from 'lucide-react';
 
 interface DataTableProps<T> {
   columns: ColumnDef<T, unknown>[];
@@ -40,32 +40,33 @@ export default function DataTable<T>({ columns, data, searchPlaceholder, searchC
   return (
     <div>
       {searchPlaceholder && (
-        <div className="mb-4">
+        <div className="mb-4 relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
           <input
             type="text"
             placeholder={searchPlaceholder}
             value={globalFilter}
             onChange={(e) => setGlobalFilter(e.target.value)}
-            className="px-4 py-2 border border-gray-200 rounded-lg w-full max-w-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            className="pl-10 pr-4 py-2.5 bg-white border border-neutral-200 rounded-xl w-full max-w-sm text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
           />
         </div>
       )}
 
-      <div className="bg-white rounded-card border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-2xl border border-neutral-100 shadow-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id} className="border-b border-gray-100">
+                <tr key={headerGroup.id} className="border-b border-neutral-100">
                   {headerGroup.headers.map((header) => (
                     <th
                       key={header.id}
-                      className="px-4 py-3 text-left text-sm font-medium text-eco-gray cursor-pointer select-none hover:text-eco-text"
+                      className="px-5 py-3.5 text-left text-[13px] font-medium text-neutral-500 uppercase tracking-wide cursor-pointer select-none hover:text-neutral-900 transition-colors"
                       onClick={header.column.getToggleSortingHandler()}
                     >
                       <div className="flex items-center gap-1">
                         {flexRender(header.column.columnDef.header, header.getContext())}
-                        {header.column.getCanSort() && <ChevronsUpDown className="h-3 w-3" />}
+                        {header.column.getCanSort() && <ChevronsUpDown className="h-3 w-3 text-neutral-400" />}
                       </div>
                     </th>
                   ))}
@@ -75,15 +76,15 @@ export default function DataTable<T>({ columns, data, searchPlaceholder, searchC
             <tbody>
               {table.getRowModel().rows.length === 0 ? (
                 <tr>
-                  <td colSpan={columns.length} className="px-4 py-8 text-center text-eco-gray">
+                  <td colSpan={columns.length} className="px-5 py-12 text-center text-neutral-500 text-sm">
                     Нет данных
                   </td>
                 </tr>
               ) : (
                 table.getRowModel().rows.map((row) => (
-                  <tr key={row.id} className="border-b border-gray-50 hover:bg-gray-50/50">
+                  <tr key={row.id} className="border-b border-neutral-50 hover:bg-neutral-50/50 transition-colors">
                     {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id} className="px-4 py-3 text-sm text-eco-text">
+                      <td key={cell.id} className="px-5 py-3.5 text-sm text-neutral-700">
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </td>
                     ))}
@@ -94,24 +95,24 @@ export default function DataTable<T>({ columns, data, searchPlaceholder, searchC
           </table>
         </div>
 
-        <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100">
-          <span className="text-sm text-eco-gray">
+        <div className="flex items-center justify-between px-5 py-3 border-t border-neutral-100">
+          <span className="text-sm text-neutral-500">
             Стр. {table.getState().pagination.pageIndex + 1} из {table.getPageCount()}
           </span>
-          <div className="flex gap-2">
+          <div className="flex gap-1">
             <button
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
-              className="p-1.5 rounded hover:bg-gray-100 disabled:opacity-30"
+              className="p-1.5 rounded-lg hover:bg-neutral-100 disabled:opacity-30 transition-colors"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-4 w-4 text-neutral-600" />
             </button>
             <button
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
-              className="p-1.5 rounded hover:bg-gray-100 disabled:opacity-30"
+              className="p-1.5 rounded-lg hover:bg-neutral-100 disabled:opacity-30 transition-colors"
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4 text-neutral-600" />
             </button>
           </div>
         </div>

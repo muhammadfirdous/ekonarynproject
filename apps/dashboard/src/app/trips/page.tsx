@@ -72,47 +72,47 @@ export default function TripsPage() {
         title="Рейсы"
         description="Рейсы в Бишкек для продажи материалов"
         action={
-          <button onClick={() => setShowForm(!showForm)} className="inline-flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-light">
+          <button onClick={() => setShowForm(!showForm)} className="inline-flex items-center gap-2 bg-brand-700 text-white px-4 py-2 rounded-lg hover:bg-brand-900">
             <Plus className="h-4 w-4" /> Новый рейс
           </button>
         }
       />
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="bg-white rounded-card border border-gray-100 shadow-sm p-6 mb-6">
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6 mb-6">
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
               <label className="block text-sm font-medium mb-1.5">Дата</label>
-              <input type="date" value={form.date} onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg" required />
+              <input type="date" value={form.date} onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))} className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg" required />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5">Назначение</label>
-              <input value={form.destination} onChange={(e) => setForm((f) => ({ ...f, destination: e.target.value }))} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg" />
+              <input value={form.destination} onChange={(e) => setForm((f) => ({ ...f, destination: e.target.value }))} className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg" />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5">Общий вес (кг)</label>
-              <input type="number" value={form.totalWeightKg} onChange={(e) => setForm((f) => ({ ...f, totalWeightKg: e.target.value }))} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg" />
+              <input type="number" value={form.totalWeightKg} onChange={(e) => setForm((f) => ({ ...f, totalWeightKg: e.target.value }))} className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg" />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5">Расходы на транспорт (сом)</label>
-              <input type="number" value={form.transportCost} onChange={(e) => setForm((f) => ({ ...f, transportCost: e.target.value }))} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg" />
+              <input type="number" value={form.transportCost} onChange={(e) => setForm((f) => ({ ...f, transportCost: e.target.value }))} className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg" />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5">Выручка (сом)</label>
-              <input type="number" value={form.revenue} onChange={(e) => setForm((f) => ({ ...f, revenue: e.target.value }))} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg" />
+              <input type="number" value={form.revenue} onChange={(e) => setForm((f) => ({ ...f, revenue: e.target.value }))} className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg" />
             </div>
           </div>
           <div className="flex gap-3">
-            <button type="submit" disabled={saving} className="bg-primary text-white px-6 py-2 rounded-lg disabled:opacity-50">
+            <button type="submit" disabled={saving} className="bg-brand-700 text-white px-6 py-2 rounded-lg disabled:opacity-50">
               {saving ? 'Сохранение...' : 'Создать рейс'}
             </button>
-            <button type="button" onClick={() => setShowForm(false)} className="px-6 py-2 border border-gray-200 rounded-lg">Отмена</button>
+            <button type="button" onClick={() => setShowForm(false)} className="px-6 py-2 border border-neutral-200 rounded-lg">Отмена</button>
           </div>
         </form>
       )}
 
       {loading ? (
-        <div className="bg-white rounded-card p-8 animate-pulse h-96" />
+        <div className="bg-white rounded-2xl p-8 animate-pulse h-96" />
       ) : (
         <DataTable columns={columns} data={data || []} searchPlaceholder="Поиск по рейсам..." />
       )}

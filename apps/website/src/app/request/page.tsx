@@ -87,15 +87,17 @@ export default function RequestPage() {
     }
   };
 
+  const inputClass = 'w-full px-4 py-2.5 bg-white border border-neutral-200 rounded-xl text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors';
+
   if (status === 'success') {
     return (
-      <main className="py-20 bg-eco-bg">
+      <main className="py-24 bg-background">
         <div className="max-w-lg mx-auto px-4 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-6">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-green-50 rounded-2xl mb-6">
             <CheckCircle className="h-8 w-8 text-green-600" />
           </div>
-          <h1 className="text-2xl font-bold text-eco-text">Заявка принята!</h1>
-          <p className="mt-4 text-eco-gray">
+          <h1 className="text-2xl font-bold text-neutral-900">Заявка принята!</h1>
+          <p className="mt-4 text-neutral-500 leading-relaxed">
             Спасибо за вашу заявку! Наш работник свяжется с вами и приедет для сбора материалов.
             Обычно это занимает 1-3 дня.
           </p>
@@ -104,7 +106,7 @@ export default function RequestPage() {
               setStatus('idle');
               setForm({ name: '', phone: '+996', password: '', materialId: '', address: '', estimatedQty: '', notes: '' });
             }}
-            className="mt-6 bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-light"
+            className="mt-6 bg-brand-700 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-brand-900 transition-colors"
           >
             Создать ещё одну заявку
           </button>
@@ -115,116 +117,123 @@ export default function RequestPage() {
 
   return (
     <main>
-      <section className="bg-gradient-to-br from-primary to-primary-light py-16">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <h1 className="text-4xl font-bold text-white">Заявка на сбор</h1>
-          <p className="mt-4 text-lg text-white/80">Заполните форму — мы приедем и заберем материалы</p>
+      {/* Hero */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-brand-50 via-white to-white py-20">
+        <div className="absolute top-0 right-0 w-72 h-72 bg-brand-300/15 rounded-full blur-3xl" />
+        <div className="relative max-w-4xl mx-auto px-4 text-center">
+          <span className="inline-flex items-center gap-1.5 bg-brand-100 text-brand-700 text-sm font-medium px-3 py-1 rounded-full border border-brand-200 mb-5">
+            Быстро и бесплатно
+          </span>
+          <h1 className="text-4xl lg:text-5xl font-extrabold text-neutral-900 tracking-tight">Заявка на сбор</h1>
+          <p className="mt-4 text-lg text-neutral-500">Заполните форму — мы приедем и заберем материалы</p>
         </div>
       </section>
 
-      <section className="py-16 bg-eco-bg">
+      <section className="py-20 bg-white">
         <div className="max-w-lg mx-auto px-4">
-          <form onSubmit={handleSubmit} className="bg-white rounded-card border border-gray-100 shadow-sm p-6">
+          <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-neutral-100 shadow-card p-8">
             {status === 'error' && (
-              <div className="mb-4 flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
+              <div className="mb-6 flex items-start gap-2.5 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
                 <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
                 <span>{errorMsg}</span>
               </div>
             )}
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-eco-text mb-1.5">Ваше имя</label>
-              <input
-                value={form.name}
-                onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                placeholder="Асан Токторов"
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                required
-              />
-            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-1.5">Ваше имя</label>
+                <input
+                  value={form.name}
+                  onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                  placeholder="Асан Токторов"
+                  className={inputClass}
+                  required
+                />
+              </div>
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-eco-text mb-1.5">Телефон</label>
-              <input
-                type="tel"
-                value={form.phone}
-                onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-                placeholder="+996700123456"
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                required
-              />
-            </div>
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-1.5">Телефон</label>
+                <input
+                  type="tel"
+                  value={form.phone}
+                  onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
+                  placeholder="+996700123456"
+                  className={inputClass}
+                  required
+                />
+              </div>
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-eco-text mb-1.5">Пароль (для отслеживания заявки)</label>
-              <input
-                type="password"
-                value={form.password}
-                onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
-                placeholder="Минимум 6 символов"
-                minLength={6}
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                required
-              />
-            </div>
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-1.5">Пароль (для отслеживания заявки)</label>
+                <input
+                  type="password"
+                  value={form.password}
+                  onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
+                  placeholder="Минимум 6 символов"
+                  minLength={6}
+                  className={inputClass}
+                  required
+                />
+              </div>
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-eco-text mb-1.5">Материал</label>
-              <select
-                value={form.materialId}
-                onChange={(e) => setForm((f) => ({ ...f, materialId: e.target.value }))}
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                required
-              >
-                <option value="">Выберите материал</option>
-                {materials.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.nameRu} ({m.buyingPrice} сом/{m.unit})
-                  </option>
-                ))}
-              </select>
-            </div>
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-1.5">Материал</label>
+                <select
+                  value={form.materialId}
+                  onChange={(e) => setForm((f) => ({ ...f, materialId: e.target.value }))}
+                  className={inputClass}
+                  required
+                >
+                  <option value="">Выберите материал</option>
+                  {materials.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.nameRu} ({m.buyingPrice} сом/{m.unit})
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-eco-text mb-1.5">Адрес</label>
-              <input
-                value={form.address}
-                onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))}
-                placeholder="ул. Ленина 12, кв 5"
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                required
-              />
-            </div>
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-1.5">Адрес</label>
+                <input
+                  value={form.address}
+                  onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))}
+                  placeholder="ул. Ленина 12, кв 5"
+                  className={inputClass}
+                  required
+                />
+              </div>
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-eco-text mb-1.5">Примерный вес (кг)</label>
-              <input
-                type="number"
-                step="0.5"
-                min="0.5"
-                value={form.estimatedQty}
-                onChange={(e) => setForm((f) => ({ ...f, estimatedQty: e.target.value }))}
-                placeholder="5"
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                required
-              />
-            </div>
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-1.5">Примерный вес (кг)</label>
+                <input
+                  type="number"
+                  step="0.5"
+                  min="0.5"
+                  value={form.estimatedQty}
+                  onChange={(e) => setForm((f) => ({ ...f, estimatedQty: e.target.value }))}
+                  placeholder="5"
+                  className={inputClass}
+                  required
+                />
+              </div>
 
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-eco-text mb-1.5">Заметки (необязательно)</label>
-              <textarea
-                value={form.notes}
-                onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
-                placeholder="Позвоните перед приходом..."
-                rows={3}
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-              />
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-1.5">Заметки (необязательно)</label>
+                <textarea
+                  value={form.notes}
+                  onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
+                  placeholder="Позвоните перед приходом..."
+                  rows={3}
+                  className={inputClass}
+                />
+              </div>
             </div>
 
             <button
               type="submit"
               disabled={status === 'loading'}
-              className="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors disabled:opacity-50"
+              className="w-full mt-6 bg-brand-700 text-white py-3 rounded-xl font-semibold hover:bg-brand-900 hover:-translate-y-[1px] transition-all duration-200 disabled:opacity-50 disabled:hover:translate-y-0"
             >
               {status === 'loading' ? 'Отправка...' : 'Отправить заявку'}
             </button>

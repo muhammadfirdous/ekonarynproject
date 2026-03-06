@@ -31,7 +31,7 @@ export default function WorkersPage() {
     <DashboardLayout>
       <PageHeader title="Работники" description="Управление работниками" />
       {loading ? (
-        <div className="bg-white rounded-card p-8 animate-pulse h-64" />
+        <div className="bg-white rounded-2xl p-8 animate-pulse h-64" />
       ) : (
         <DataTable columns={columns} data={data || []} searchPlaceholder="Поиск по работникам..." />
       )}

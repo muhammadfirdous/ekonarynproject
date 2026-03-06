@@ -81,84 +81,84 @@ export default function MaterialsPage() {
         title="Материалы"
         description="Управление ценами и материалами"
         action={
-          <button onClick={() => { setShowForm(!showForm); setEditing(null); setForm(emptyForm); }} className="inline-flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-light">
+          <button onClick={() => { setShowForm(!showForm); setEditing(null); setForm(emptyForm); }} className="inline-flex items-center gap-2 bg-brand-700 text-white px-4 py-2 rounded-lg hover:bg-brand-900">
             <Plus className="h-4 w-4" /> Добавить
           </button>
         }
       />
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="bg-white rounded-card border border-gray-100 shadow-sm p-6 mb-6">
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6 mb-6">
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
               <label className="block text-sm font-medium mb-1.5">Name (EN)</label>
-              <input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg" required />
+              <input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg" required />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5">Название (KY)</label>
-              <input value={form.nameKy} onChange={(e) => setForm((f) => ({ ...f, nameKy: e.target.value }))} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg" required />
+              <input value={form.nameKy} onChange={(e) => setForm((f) => ({ ...f, nameKy: e.target.value }))} className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg" required />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5">Название (RU)</label>
-              <input value={form.nameRu} onChange={(e) => setForm((f) => ({ ...f, nameRu: e.target.value }))} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg" required />
+              <input value={form.nameRu} onChange={(e) => setForm((f) => ({ ...f, nameRu: e.target.value }))} className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg" required />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5">Единица</label>
-              <input value={form.unit} onChange={(e) => setForm((f) => ({ ...f, unit: e.target.value }))} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg" />
+              <input value={form.unit} onChange={(e) => setForm((f) => ({ ...f, unit: e.target.value }))} className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg" />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5">Цена закупки (сом/{form.unit})</label>
-              <input type="number" step="0.5" min="0" value={form.buyingPrice} onChange={(e) => setForm((f) => ({ ...f, buyingPrice: e.target.value }))} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg" required />
+              <input type="number" step="0.5" min="0" value={form.buyingPrice} onChange={(e) => setForm((f) => ({ ...f, buyingPrice: e.target.value }))} className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg" required />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5">Цена продажи (сом/{form.unit})</label>
-              <input type="number" step="0.5" min="0" value={form.sellingPrice} onChange={(e) => setForm((f) => ({ ...f, sellingPrice: e.target.value }))} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg" required />
+              <input type="number" step="0.5" min="0" value={form.sellingPrice} onChange={(e) => setForm((f) => ({ ...f, sellingPrice: e.target.value }))} className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg" required />
             </div>
             <div className="col-span-2">
               <label className="block text-sm font-medium mb-1.5">Описание</label>
-              <textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} className="w-full px-4 py-2.5 border border-gray-200 rounded-lg" rows={2} />
+              <textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg" rows={2} />
             </div>
           </div>
           <div className="flex gap-3">
-            <button type="submit" disabled={saving} className="bg-primary text-white px-6 py-2 rounded-lg disabled:opacity-50">{saving ? 'Сохранение...' : editing ? 'Обновить' : 'Создать'}</button>
-            <button type="button" onClick={() => { setShowForm(false); setEditing(null); }} className="px-6 py-2 border border-gray-200 rounded-lg">Отмена</button>
+            <button type="submit" disabled={saving} className="bg-brand-700 text-white px-6 py-2 rounded-lg disabled:opacity-50">{saving ? 'Сохранение...' : editing ? 'Обновить' : 'Создать'}</button>
+            <button type="button" onClick={() => { setShowForm(false); setEditing(null); }} className="px-6 py-2 border border-neutral-200 rounded-lg">Отмена</button>
           </div>
         </form>
       )}
 
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[1, 2, 3, 4].map((i) => <div key={i} className="bg-white rounded-card p-6 h-40 animate-pulse" />)}
+          {[1, 2, 3, 4].map((i) => <div key={i} className="bg-white rounded-2xl p-6 h-40 animate-pulse" />)}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {data?.map((m) => (
-            <div key={m.id} className="bg-white rounded-card border border-gray-100 shadow-sm p-6">
+            <div key={m.id} className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6">
               <div className="flex items-start justify-between">
                 <div>
-                  <h3 className="font-semibold text-eco-text">{m.nameRu}</h3>
-                  <p className="text-sm text-eco-gray">{m.nameKy} · {m.name}</p>
+                  <h3 className="font-semibold text-neutral-900">{m.nameRu}</h3>
+                  <p className="text-sm text-neutral-500">{m.nameKy} · {m.name}</p>
                 </div>
                 <div className="flex gap-1">
-                  <button onClick={() => startEdit(m)} className="p-1.5 hover:bg-gray-100 rounded"><Pencil className="h-4 w-4 text-eco-gray" /></button>
+                  <button onClick={() => startEdit(m)} className="p-1.5 hover:bg-neutral-100 rounded"><Pencil className="h-4 w-4 text-neutral-500" /></button>
                   <button onClick={() => handleDelete(m.id)} className="p-1.5 hover:bg-red-50 rounded"><Trash2 className="h-4 w-4 text-red-400" /></button>
                 </div>
               </div>
               <div className="mt-4 flex gap-6">
                 <div>
-                  <p className="text-xs text-eco-gray">Закупка</p>
-                  <p className="font-semibold text-eco-text">{m.buyingPrice} сом/{m.unit}</p>
+                  <p className="text-xs text-neutral-500">Закупка</p>
+                  <p className="font-semibold text-neutral-900">{m.buyingPrice} сом/{m.unit}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-eco-gray">Продажа</p>
+                  <p className="text-xs text-neutral-500">Продажа</p>
                   <p className="font-semibold text-green-600">{m.sellingPrice} сом/{m.unit}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-eco-gray">Маржа</p>
-                  <p className="font-semibold text-primary">{m.sellingPrice - m.buyingPrice} сом/{m.unit}</p>
+                  <p className="text-xs text-neutral-500">Маржа</p>
+                  <p className="font-semibold text-brand-700">{m.sellingPrice - m.buyingPrice} сом/{m.unit}</p>
                 </div>
               </div>
-              {m.description && <p className="mt-3 text-sm text-eco-gray">{m.description}</p>}
+              {m.description && <p className="mt-3 text-sm text-neutral-500">{m.description}</p>}
             </div>
           ))}
         </div>

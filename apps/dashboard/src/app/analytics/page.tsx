@@ -56,8 +56,8 @@ export default function AnalyticsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         {/* Monthly collections chart */}
-        <div className="bg-white rounded-card border border-gray-100 shadow-sm p-6">
-          <h3 className="text-lg font-semibold text-eco-text mb-4">Объем по месяцам (кг)</h3>
+        <div className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6">
+          <h3 className="text-lg font-semibold text-neutral-900 mb-4">Объем по месяцам (кг)</h3>
           {monthlyChart.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={monthlyChart}>
@@ -69,13 +69,13 @@ export default function AnalyticsPage() {
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="h-[300px] flex items-center justify-center text-eco-gray">Нет данных</div>
+            <div className="h-[300px] flex items-center justify-center text-neutral-500">Нет данных</div>
           )}
         </div>
 
         {/* Materials breakdown */}
-        <div className="bg-white rounded-card border border-gray-100 shadow-sm p-6">
-          <h3 className="text-lg font-semibold text-eco-text mb-4">По материалам (кг)</h3>
+        <div className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6">
+          <h3 className="text-lg font-semibold text-neutral-900 mb-4">По материалам (кг)</h3>
           {materialsPie.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
@@ -89,29 +89,29 @@ export default function AnalyticsPage() {
               </PieChart>
             </ResponsiveContainer>
           ) : (
-            <div className="h-[300px] flex items-center justify-center text-eco-gray">Нет данных</div>
+            <div className="h-[300px] flex items-center justify-center text-neutral-500">Нет данных</div>
           )}
         </div>
       </div>
 
       {/* Worker stats */}
-      <div className="bg-white rounded-card border border-gray-100 shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-eco-text mb-4">Статистика работников</h3>
+      <div className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6">
+        <h3 className="text-lg font-semibold text-neutral-900 mb-4">Статистика работников</h3>
         {workers && workers.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {workers.map((w) => (
-              <div key={w.worker.name} className="bg-eco-light rounded-xl p-4">
-                <p className="font-semibold text-eco-text">{w.worker.name}</p>
-                <div className="mt-2 space-y-1 text-sm text-eco-gray">
-                  <p>Сборов: <span className="font-medium text-eco-text">{w.totalCollections}</span></p>
-                  <p>Собрано: <span className="font-medium text-eco-text">{formatWeight(w.totalWeightKg)}</span></p>
-                  <p>Рейсов: <span className="font-medium text-eco-text">{w.totalTrips}</span></p>
+              <div key={w.worker.name} className="bg-brand-50 rounded-xl p-4">
+                <p className="font-semibold text-neutral-900">{w.worker.name}</p>
+                <div className="mt-2 space-y-1 text-sm text-neutral-500">
+                  <p>Сборов: <span className="font-medium text-neutral-900">{w.totalCollections}</span></p>
+                  <p>Собрано: <span className="font-medium text-neutral-900">{formatWeight(w.totalWeightKg)}</span></p>
+                  <p>Рейсов: <span className="font-medium text-neutral-900">{w.totalTrips}</span></p>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="py-8 text-center text-eco-gray">Нет данных</div>
+          <div className="py-8 text-center text-neutral-500">Нет данных</div>
         )}
       </div>
     </DashboardLayout>

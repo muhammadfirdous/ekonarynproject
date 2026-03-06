@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Recycle, Menu, X } from 'lucide-react';
 
 const navLinks = [
@@ -15,45 +15,71 @@ const navLinks = [
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-100">
+    <header
+      className={`sticky top-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? 'bg-white/80 backdrop-blur-md shadow-sm border-b border-neutral-200/50'
+          : 'bg-white border-b border-neutral-200'
+      }`}
+    >
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <Recycle className="h-7 w-7 text-primary" />
-          <span className="text-xl font-bold text-primary">Эко Нарын</span>
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <div className="w-8 h-8 bg-brand-700 rounded-lg flex items-center justify-center transition-transform duration-200 group-hover:scale-105">
+            <Recycle className="h-5 w-5 text-white" />
+          </div>
+          <span className="text-lg font-bold text-neutral-900">Эко Нарын</span>
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden md:flex items-center gap-1">
           {navLinks.map((link) => (
-            <Link key={link.href} href={link.href} className="text-sm text-eco-text hover:text-primary transition-colors">
+            <Link
+              key={link.href}
+              href={link.href}
+              className="nav-link text-sm font-medium text-neutral-700 hover:text-brand-700 px-3 py-2 rounded-lg transition-colors duration-150"
+            >
               {link.label}
             </Link>
           ))}
           <Link
             href="/request"
-            className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-light transition-colors"
+            className="ml-3 bg-brand-700 text-white px-5 py-2 rounded-full text-sm font-semibold shadow-brand hover:bg-brand-900 hover:-translate-y-[1px] hover:shadow-brand-lg transition-all duration-200"
           >
             Заявка на сбор
           </Link>
         </nav>
 
         {/* Mobile toggle */}
-        <button onClick={() => setOpen(!open)} className="md:hidden p-2">
-          {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        <button
+          onClick={() => setOpen(!open)}
+          className="md:hidden p-2 rounded-lg hover:bg-neutral-100 transition-colors"
+        >
+          {open ? <X className="h-5 w-5 text-neutral-700" /> : <Menu className="h-5 w-5 text-neutral-700" />}
         </button>
       </div>
 
       {/* Mobile nav */}
-      {open && (
-        <nav className="md:hidden border-t border-gray-100 bg-white px-4 py-4 space-y-3">
+      <div
+        className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+          open ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+        }`}
+      >
+        <nav className="border-t border-neutral-100 bg-white/95 backdrop-blur-md px-4 py-4 space-y-1">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               onClick={() => setOpen(false)}
-              className="block text-eco-text hover:text-primary py-1"
+              className="block text-neutral-700 hover:text-brand-700 hover:bg-brand-50 py-2.5 px-3 rounded-lg text-sm font-medium transition-colors"
             >
               {link.label}
             </Link>
@@ -61,12 +87,12 @@ export default function Header() {
           <Link
             href="/request"
             onClick={() => setOpen(false)}
-            className="block bg-primary text-white text-center px-4 py-2 rounded-lg font-medium"
+            className="block bg-brand-700 text-white text-center px-4 py-2.5 rounded-full font-semibold text-sm mt-3 shadow-brand"
           >
             Заявка на сбор
           </Link>
         </nav>
-      )}
+      </div>
     </header>
   );
 }

@@ -4,7 +4,33 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
+:root {
+  --brand-900: #1B5E20;
+  --brand-700: #2E7D32;
+  --brand-500: #4CAF50;
+  --brand-300: #A5D6A7;
+  --brand-100: #E8F5E9;
+  --brand-50: #F1F8F1;
+  --sidebar: #0D1117;
+  --background: #F7F9F7;
+}
+
 body {
-  background-color: #F9F9F4;
-  color: #1C2A1C;
+  background-color: var(--background);
+  color: #111827;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #D1D5DB;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9CA3AF;
 }

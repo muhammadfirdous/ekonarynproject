@@ -73,7 +73,7 @@ export default function RoutesPage() {
         action={
           <button
             onClick={() => setShowForm(!showForm)}
-            className="inline-flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-light"
+            className="inline-flex items-center gap-2 bg-brand-700 text-white px-4 py-2 rounded-lg hover:bg-brand-900"
           >
             <Plus className="h-4 w-4" />
             Новый маршрут
@@ -82,14 +82,14 @@ export default function RoutesPage() {
       />
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="bg-white rounded-card border border-gray-100 shadow-sm p-6 mb-6">
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6 mb-6">
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-eco-text mb-1.5">Работник</label>
+              <label className="block text-sm font-medium text-neutral-900 mb-1.5">Работник</label>
               <select
                 value={form.workerId}
                 onChange={(e) => setForm((f) => ({ ...f, workerId: e.target.value }))}
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg"
+                className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg"
                 required
               >
                 <option value="">Выберите работника</option>
@@ -99,21 +99,21 @@ export default function RoutesPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-eco-text mb-1.5">Дата</label>
+              <label className="block text-sm font-medium text-neutral-900 mb-1.5">Дата</label>
               <input
                 type="date"
                 value={form.date}
                 onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg"
+                className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg"
                 required
               />
             </div>
           </div>
 
-          <label className="block text-sm font-medium text-eco-text mb-2">Остановки</label>
+          <label className="block text-sm font-medium text-neutral-900 mb-2">Остановки</label>
           {form.stops.map((stop, i) => (
             <div key={i} className="flex gap-2 mb-2">
-              <span className="flex items-center justify-center w-8 h-10 bg-eco-light rounded text-sm font-medium text-primary">
+              <span className="flex items-center justify-center w-8 h-10 bg-brand-50 rounded text-sm font-medium text-brand-700">
                 {i + 1}
               </span>
               <input
@@ -124,7 +124,7 @@ export default function RoutesPage() {
                   stops[i] = { ...stops[i], address: e.target.value };
                   setForm((f) => ({ ...f, stops }));
                 }}
-                className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm"
+                className="flex-1 px-3 py-2 border border-neutral-200 rounded-lg text-sm"
                 required
               />
               <input
@@ -135,22 +135,22 @@ export default function RoutesPage() {
                   stops[i] = { ...stops[i], notes: e.target.value };
                   setForm((f) => ({ ...f, stops }));
                 }}
-                className="w-48 px-3 py-2 border border-gray-200 rounded-lg text-sm"
+                className="w-48 px-3 py-2 border border-neutral-200 rounded-lg text-sm"
               />
               {form.stops.length > 1 && (
                 <button type="button" onClick={() => removeStop(i)} className="text-red-400 hover:text-red-600 px-2">✕</button>
               )}
             </div>
           ))}
-          <button type="button" onClick={addStop} className="text-sm text-primary hover:underline mt-1 mb-4">
+          <button type="button" onClick={addStop} className="text-sm text-brand-700 hover:underline mt-1 mb-4">
             + Добавить остановку
           </button>
 
           <div className="flex gap-3">
-            <button type="submit" disabled={saving} className="bg-primary text-white px-6 py-2 rounded-lg disabled:opacity-50">
+            <button type="submit" disabled={saving} className="bg-brand-700 text-white px-6 py-2 rounded-lg disabled:opacity-50">
               {saving ? 'Сохранение...' : 'Создать маршрут'}
             </button>
-            <button type="button" onClick={() => setShowForm(false)} className="px-6 py-2 border border-gray-200 rounded-lg">
+            <button type="button" onClick={() => setShowForm(false)} className="px-6 py-2 border border-neutral-200 rounded-lg">
               Отмена
             </button>
           </div>
@@ -159,18 +159,18 @@ export default function RoutesPage() {
 
       {loading ? (
         <div className="space-y-4">
-          {[1, 2, 3].map((i) => <div key={i} className="bg-white rounded-card p-6 h-32 animate-pulse" />)}
+          {[1, 2, 3].map((i) => <div key={i} className="bg-white rounded-2xl p-6 h-32 animate-pulse" />)}
         </div>
       ) : (
         <div className="space-y-4">
           {routes && routes.length > 0 ? (
             routes.map((route) => (
-              <div key={route.id} className="bg-white rounded-card border border-gray-100 shadow-sm p-6">
+              <div key={route.id} className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <User className="h-5 w-5 text-eco-gray" />
+                    <User className="h-5 w-5 text-neutral-500" />
                     <span className="font-medium">{route.worker?.name}</span>
-                    <span className="text-sm text-eco-gray">· {formatDate(route.date)}</span>
+                    <span className="text-sm text-neutral-500">· {formatDate(route.date)}</span>
                   </div>
                   <span className={`text-xs px-2 py-1 rounded-full ${
                     route.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
@@ -181,12 +181,12 @@ export default function RoutesPage() {
                 <div className="space-y-2">
                   {(route.stops as Stop[]).map((stop, i) => (
                     <div key={i} className="flex items-start gap-3 text-sm">
-                      <div className="flex items-center justify-center w-6 h-6 bg-eco-light rounded-full text-xs font-medium text-primary mt-0.5">
+                      <div className="flex items-center justify-center w-6 h-6 bg-brand-50 rounded-full text-xs font-medium text-brand-700 mt-0.5">
                         {stop.order}
                       </div>
                       <div>
-                        <p className="text-eco-text">{stop.address}</p>
-                        {stop.notes && <p className="text-eco-gray text-xs">{stop.notes}</p>}
+                        <p className="text-neutral-900">{stop.address}</p>
+                        {stop.notes && <p className="text-neutral-500 text-xs">{stop.notes}</p>}
                       </div>
                     </div>
                   ))}
@@ -194,7 +194,7 @@ export default function RoutesPage() {
               </div>
             ))
           ) : (
-            <div className="bg-white rounded-card p-8 text-center text-eco-gray">Нет маршрутов</div>
+            <div className="bg-white rounded-2xl p-8 text-center text-neutral-500">Нет маршрутов</div>
           )}
         </div>
       )}

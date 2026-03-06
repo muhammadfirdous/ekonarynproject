@@ -24,7 +24,7 @@ const columns: ColumnDef<User, unknown>[] = [
     accessorKey: 'points',
     header: 'Баллы',
     cell: ({ row }) => (
-      <span className="inline-flex items-center gap-1 bg-eco-light text-primary px-2 py-0.5 rounded-full text-sm font-medium">
+      <span className="inline-flex items-center gap-1 bg-brand-50 text-brand-700 px-2 py-0.5 rounded-full text-sm font-medium">
         {row.original.points}
       </span>
     ),
@@ -39,7 +39,7 @@ export default function ResidentsPage() {
     <DashboardLayout>
       <PageHeader title="Жители" description="База данных жителей" />
       {loading ? (
-        <div className="bg-white rounded-card p-8 animate-pulse h-96" />
+        <div className="bg-white rounded-2xl p-8 animate-pulse h-96" />
       ) : (
         <DataTable columns={columns} data={data || []} searchPlaceholder="Поиск по жителям..." />
       )}
