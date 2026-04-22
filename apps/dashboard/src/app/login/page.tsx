@@ -6,7 +6,7 @@ import { useAuth } from '@/lib/auth';
 import { Recycle } from 'lucide-react';
 
 export default function LoginPage() {
-  const [phone, setPhone] = useState('+996');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -32,12 +32,12 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
+        <div className="text-center mb-8" translate="no">
           <div className="inline-flex items-center justify-center w-14 h-14 bg-brand-700 rounded-2xl mb-4 shadow-lg shadow-brand-900/20">
             <Recycle className="h-7 w-7 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-neutral-900">Эко Нарын</h1>
-          <p className="text-neutral-500 mt-1 text-sm">Панель управления</p>
+          <h1 className="text-2xl font-bold text-neutral-900" suppressHydrationWarning>Эко Нарын</h1>
+          <p className="text-neutral-500 mt-1 text-sm" suppressHydrationWarning>Панель управления</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-card border border-neutral-100 p-8">

@@ -1,6 +1,33 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import * as SecureStore from 'expo-secure-store';
+import { Platform } from 'react-native';
 import { api } from './api';
+
+// Web-safe storage wrapper
+const storage = {
+  async getItem(key: string): Promise<string | null> {
+    if (Platform.OS === 'web') {
+      return localStorage.getItem(key);
+    }
+    const SecureStore = await import('expo-secure-store');
+    return SecureStore.getItem(key);
+  },
+  async setItem(key: string, value: string): Promise<void> {
+    if (Platform.OS === 'web') {
+      localStorage.setItem(key, value);
+      return;
+    }
+    const SecureStore = await import('expo-secure-store');
+    await SecureStore.setItemAsync(key, value);
+  },
+  async deleteItem(key: string): Promise<void> {
+    if (Platform.OS === 'web') {
+      localStorage.removeItem(key);
+      return;
+    }
+    const SecureStore = await import('expo-secure-store');
+    await SecureStore.deleteItemAsync(key);
+  },
+};
 
 interface User {
   id: string;
@@ -30,14 +57,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     (async () => {
       try {
-        const saved = await SecureStore.getItemAsync('ekonaryn_token');
+        const saved = await storage.getItem('ekonaryn_token');
         if (saved) {
           setToken(saved);
           const res = await api.get<{ data: User }>('/auth/me', saved);
           setUser(res.data);
         }
       } catch {
-        await SecureStore.deleteItemAsync('ekonaryn_token');
+        await storage.deleteItem('ekonaryn_token');
       } finally {
         setLoading(false);
       }
@@ -49,7 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { user: u, accessToken } = res.data;
     setUser(u);
     setToken(accessToken);
-    await SecureStore.setItemAsync('ekonaryn_token', accessToken);
+    await storage.setItem('ekonaryn_token', accessToken);
     return u;
   };
 
@@ -58,14 +85,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { user: u, accessToken } = res.data;
     setUser(u);
     setToken(accessToken);
-    await SecureStore.setItemAsync('ekonaryn_token', accessToken);
+    await storage.setItem('ekonaryn_token', accessToken);
     return u;
   };
 
   const logout = async () => {
     setUser(null);
     setToken(null);
-    await SecureStore.deleteItemAsync('ekonaryn_token');
+    try {
+      await storage.deleteItem('ekonaryn_token');
+    } catch {
+      // ignore storage errors on logout
+    }
   };
 
   return (

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import {
   LayoutDashboard,
@@ -73,7 +73,13 @@ function NavSection({ label, items, pathname }: { label: string; items: typeof m
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { logout, user } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    router.push('/login');
+  };
 
   return (
     <aside className="fixed left-0 top-0 h-full w-64 bg-sidebar flex flex-col z-50">
@@ -109,7 +115,7 @@ export default function Sidebar() {
           </div>
         </div>
         <button
-          onClick={logout}
+          onClick={handleLogout}
           className="flex items-center gap-2 text-xs text-neutral-500 hover:text-red-400 transition-colors duration-150 w-full px-1"
         >
           <LogOut className="h-3.5 w-3.5" />

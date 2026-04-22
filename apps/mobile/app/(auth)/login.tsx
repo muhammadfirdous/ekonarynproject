@@ -5,15 +5,20 @@ import { useAuth } from '../../src/lib/auth';
 import { colors } from '../../src/lib/theme';
 
 export default function LoginScreen() {
-  const [phone, setPhone] = useState('+996');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const { login } = useAuth();
   const router = useRouter();
 
   const handleLogin = async () => {
-    if (!phone || !password) return;
+    if (!phone || !password) {
+      setErrorMessage('Пожалуйста, введите телефон и пароль');
+      return;
+    }
     setLoading(true);
+    setErrorMessage('');
     try {
       const user = await login(phone, password);
       if (user.role === 'WORKER') {
@@ -22,7 +27,11 @@ export default function LoginScreen() {
         router.replace('/(resident)/home');
       }
     } catch (err) {
-      Alert.alert('Ошибка', err instanceof Error ? err.message : 'Не удалось войти');
+      const msg = err instanceof Error ? err.message : 'Не удалось войти';
+      setErrorMessage(msg);
+      if (Platform.OS !== 'web') {
+        Alert.alert('Ошибка', msg);
+      }
     } finally {
       setLoading(false);
     }
@@ -43,6 +52,12 @@ export default function LoginScreen() {
         </View>
 
         <View style={{ backgroundColor: colors.white, borderRadius: 12, padding: 24, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 10, elevation: 2 }}>
+          {errorMessage ? (
+            <View style={{ backgroundColor: '#FFEBEE', padding: 12, borderRadius: 8, marginBottom: 16 }}>
+              <Text style={{ color: colors.error, fontSize: 13, textAlign: 'center' }}>{errorMessage}</Text>
+            </View>
+          ) : null}
+
           <Text style={{ fontSize: 12, fontWeight: '500', color: colors.text, marginBottom: 6 }}>Телефон</Text>
           <TextInput
             value={phone}

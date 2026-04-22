@@ -74,7 +74,7 @@ export default function TodayScreen() {
       <Text style={{ fontSize: 18, fontWeight: 'bold', color: colors.text, marginBottom: 12 }}>Маршрут на сегодня</Text>
       {todayRoute ? (
         <View style={{ backgroundColor: colors.white, borderRadius: 12, borderWidth: 1, borderColor: colors.border, marginBottom: 20 }}>
-          {(todayRoute.stops as Stop[]).map((stop, i) => (
+          {todayRoute.stops.map((stop, i) => (
             <TouchableOpacity
               key={i}
               onPress={() => {
@@ -83,7 +83,7 @@ export default function TodayScreen() {
               }}
               style={{
                 flexDirection: 'row', padding: 16, alignItems: 'flex-start',
-                borderBottomWidth: i < (todayRoute.stops as Stop[]).length - 1 ? 1 : 0,
+                borderBottomWidth: i < todayRoute.stops.length - 1 ? 1 : 0,
                 borderBottomColor: '#F0F0F0',
               }}
             >

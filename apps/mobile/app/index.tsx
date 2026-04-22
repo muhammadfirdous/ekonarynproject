@@ -17,7 +17,7 @@ export default function Index() {
     } else {
       router.replace('/(resident)/home');
     }
-  }, [user, loading]);
+  }, [user, loading, router]);
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>

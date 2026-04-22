@@ -4,7 +4,6 @@
     "slug": "ekonaryn",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "scheme": "ekonaryn",
     "splash": {
@@ -20,6 +19,9 @@
         "backgroundColor": "#1B5E20"
       },
       "package": "kg.ekonaryn.app"
+    },
+    "web": {
+      "bundler": "metro"
     },
     "plugins": [
       "expo-router",
