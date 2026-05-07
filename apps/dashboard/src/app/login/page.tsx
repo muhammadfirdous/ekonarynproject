@@ -42,8 +42,8 @@ export default function LoginPage() {
           <div className="inline-flex items-center justify-center w-14 h-14 bg-brand-700 rounded-2xl mb-4 shadow-lg shadow-brand-900/20">
             <Recycle className="h-7 w-7 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-neutral-900" suppressHydrationWarning>{t('brand')}</h1>
-          <p className="text-neutral-500 mt-1 text-sm" suppressHydrationWarning>{t('brandSub')}</p>
+          <h1 className="text-2xl font-bold text-neutral-900">{t('brand')}</h1>
+          <p className="text-neutral-500 mt-1 text-sm">{t('brandSub')}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-card border border-neutral-100 p-8">

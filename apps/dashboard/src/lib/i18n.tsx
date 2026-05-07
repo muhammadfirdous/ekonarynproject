@@ -3,7 +3,6 @@
 import {
   createContext,
   useContext,
-  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -11,12 +10,11 @@ import {
 import ru from './messages/ru';
 import en from './messages/en';
 import { setUtilLang } from './utils';
+import { LANG_COOKIE, type Lang } from './lang-config';
 
-export type Lang = 'ru' | 'en';
+export type { Lang };
 
 const dictionaries = { ru, en } as const;
-
-const STORAGE_KEY = 'ekonaryn_lang';
 
 interface LanguageContextValue {
   lang: Lang;
@@ -42,29 +40,28 @@ function interpolate(str: string, vars?: Record<string, string | number>): strin
   );
 }
 
-export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Lang>('ru');
+function writeCookie(value: Lang) {
+  if (typeof document === 'undefined') return;
+  document.cookie = `${LANG_COOKIE}=${value}; path=/; max-age=31536000; samesite=lax`;
+}
 
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY) as Lang | null;
-      if (stored === 'ru' || stored === 'en') {
-        setLangState(stored);
-        setUtilLang(stored);
-      }
-    } catch {
-      // ignore
-    }
-  }, []);
+export function LanguageProvider({
+  children,
+  initialLang = 'ru',
+}: {
+  children: ReactNode;
+  initialLang?: Lang;
+}) {
+  const [lang, setLangState] = useState<Lang>(initialLang);
+
+  // Keep the format-utility module variable in sync with the rendered language.
+  // Safe to call during render: it's an idempotent set on a module-level variable.
+  setUtilLang(lang);
 
   const setLang = (l: Lang) => {
     setLangState(l);
     setUtilLang(l);
-    try {
-      localStorage.setItem(STORAGE_KEY, l);
-    } catch {
-      // ignore
-    }
+    writeCookie(l);
     if (typeof document !== 'undefined') {
       document.documentElement.lang = l;
     }
@@ -93,9 +90,6 @@ export function useT() {
   return useLang().t;
 }
 
-/**
- * Resolve a t() value that may be an array (returns the array as-is) or string.
- */
 export function useTArray(key: string): string[] {
   const { lang } = useLang();
   const dict = dictionaries[lang];

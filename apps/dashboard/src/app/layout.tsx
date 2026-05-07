@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
 import './globals.css';
 import { AuthProvider } from '@/lib/auth';
 import { LanguageProvider } from '@/lib/i18n';
+import { LANG_COOKIE, type Lang } from '@/lib/lang-config';
 
 export const metadata: Metadata = {
   title: 'Eko Naryn - Dashboard',
@@ -9,10 +11,13 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const stored = cookies().get(LANG_COOKIE)?.value;
+  const initialLang: Lang = stored === 'en' ? 'en' : 'ru';
+
   return (
-    <html lang="ru" translate="no">
+    <html lang={initialLang} translate="no">
       <body className="font-sans antialiased">
-        <LanguageProvider>
+        <LanguageProvider initialLang={initialLang}>
           <AuthProvider>{children}</AuthProvider>
         </LanguageProvider>
       </body>
