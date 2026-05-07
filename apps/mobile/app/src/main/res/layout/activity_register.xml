@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/auth_register_title"
+                android:textColor="@color/text_primary"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/auth_register_sub"
+                android:textColor="@color/text_gray"
+                android:textSize="14sp"
+                android:layout_marginTop="4dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card"
+            android:padding="24dp">
+
+            <TextView
+                android:id="@+id/errorBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:textColor="@color/error"
+                android:textSize="13sp"
+                android:gravity="center"
+                android:visibility="gone"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_status_cancelled" />
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/auth_name" android:textSize="12sp" android:textStyle="bold"
+                android:textColor="@color/text_primary" android:layout_marginBottom="6dp" />
+            <EditText android:id="@+id/inputName" style="@style/InputField"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:hint="@string/auth_name_placeholder" android:autofillHints="name"
+                android:inputType="textPersonName" android:layout_marginBottom="16dp" />
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/auth_phone" android:textSize="12sp" android:textStyle="bold"
+                android:textColor="@color/text_primary" android:layout_marginBottom="6dp" />
+            <EditText android:id="@+id/inputPhone" style="@style/InputField"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:hint="@string/auth_phone_placeholder2" android:autofillHints="phone"
+                android:inputType="phone" android:layout_marginBottom="16dp" />
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/auth_password" android:textSize="12sp" android:textStyle="bold"
+                android:textColor="@color/text_primary" android:layout_marginBottom="6dp" />
+            <EditText android:id="@+id/inputPassword" style="@style/InputField"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:hint="@string/auth_password_min" android:autofillHints="newPassword"
+                android:inputType="textPassword" android:layout_marginBottom="16dp" />
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/auth_address" android:textSize="12sp" android:textStyle="bold"
+                android:textColor="@color/text_primary" android:layout_marginBottom="6dp" />
+            <EditText android:id="@+id/inputAddress" style="@style/InputField"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:hint="@string/auth_address_placeholder" android:autofillHints="postalAddress"
+                android:inputType="textPostalAddress" android:layout_marginBottom="24dp" />
+
+            <Button android:id="@+id/btnRegister" style="@style/PrimaryButton"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="@string/auth_register" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/btnGoToLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:padding="8dp"
+            android:textColor="@color/text_gray"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+</ScrollView>

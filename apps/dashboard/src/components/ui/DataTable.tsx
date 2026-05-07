@@ -12,6 +12,7 @@ import {
 } from '@tanstack/react-table';
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight, ChevronsUpDown, Search } from 'lucide-react';
+import { useT } from '@/lib/i18n';
 
 interface DataTableProps<T> {
   columns: ColumnDef<T, unknown>[];
@@ -20,7 +21,8 @@ interface DataTableProps<T> {
   searchColumn?: string;
 }
 
-export default function DataTable<T>({ columns, data, searchPlaceholder, searchColumn }: DataTableProps<T>) {
+export default function DataTable<T>({ columns, data, searchPlaceholder }: DataTableProps<T>) {
+  const t = useT();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
 
@@ -77,7 +79,7 @@ export default function DataTable<T>({ columns, data, searchPlaceholder, searchC
               {table.getRowModel().rows.length === 0 ? (
                 <tr>
                   <td colSpan={columns.length} className="px-5 py-12 text-center text-neutral-500 text-sm">
-                    Нет данных
+                    {t('common.noData')}
                   </td>
                 </tr>
               ) : (
@@ -97,7 +99,7 @@ export default function DataTable<T>({ columns, data, searchPlaceholder, searchC
 
         <div className="flex items-center justify-between px-5 py-3 border-t border-neutral-100">
           <span className="text-sm text-neutral-500">
-            Стр. {table.getState().pagination.pageIndex + 1} из {table.getPageCount()}
+            {t('common.page')} {table.getState().pagination.pageIndex + 1} {t('common.of')} {table.getPageCount()}
           </span>
           <div className="flex gap-1">
             <button

@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Eko Naryn</string>
+    <string name="brand">Eko Naryn</string>
+    <string name="brand_sub">Sign in to the app</string>
+
+    <!-- Common -->
+    <string name="loading">Loading…</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="saving">Saving…</string>
+    <string name="submit">Submit</string>
+    <string name="submitting">Submitting…</string>
+    <string name="error">Error</string>
+    <string name="kg">kg</string>
+    <string name="currency">som</string>
+    <string name="kg_qty_format">%1$.1f kg</string>
+    <string name="estimate_format">Estimate: ~%1$s kg</string>
+    <string name="material_price_format">%1$s · %2$.0f som/%3$s</string>
+    <string name="all">All</string>
+    <string name="none">Not set</string>
+    <string name="pull_to_refresh">Pull down to refresh</string>
+    <string name="failed">Operation failed</string>
+
+    <!-- Auth -->
+    <string name="auth_phone">Phone</string>
+    <string name="auth_phone_placeholder">+996700000001</string>
+    <string name="auth_phone_placeholder2">+996700123456</string>
+    <string name="auth_password">Password</string>
+    <string name="auth_password_placeholder">••••••</string>
+    <string name="auth_password_min">At least 6 characters</string>
+    <string name="auth_login">Sign in</string>
+    <string name="auth_login_in">Signing in…</string>
+    <string name="auth_no_account">No account yet?</string>
+    <string name="auth_to_register">Register</string>
+    <string name="auth_has_account">Already have an account?</string>
+    <string name="auth_to_login">Sign in</string>
+    <string name="auth_register">Register</string>
+    <string name="auth_register_title">Register</string>
+    <string name="auth_register_sub">Create an Eko Naryn account</string>
+    <string name="auth_registering">Registering…</string>
+    <string name="auth_name">Name</string>
+    <string name="auth_name_placeholder">Your name</string>
+    <string name="auth_address">Address (optional)</string>
+    <string name="auth_address_placeholder">12 Lenin St., apt 5</string>
+    <string name="auth_fill_phone_pass">Please enter your phone and password</string>
+    <string name="auth_login_failed">Could not sign in</string>
+    <string name="auth_register_failed">Could not register</string>
+    <string name="auth_confirm_logout">Are you sure you want to sign out?</string>
+    <string name="auth_logout">Sign out</string>
+
+    <!-- Roles -->
+    <string name="role_admin">Administrator</string>
+    <string name="role_worker">Worker</string>
+    <string name="role_resident">Resident</string>
+    <string name="role_worker_job">Worker (Collector)</string>
+    <string name="badge_resident">🏠 Resident</string>
+    <string name="badge_worker">👷 Worker</string>
+    <string name="badge_admin">👑 Admin</string>
+
+    <!-- Status -->
+    <string name="status_pending">Pending</string>
+    <string name="status_assigned">Assigned</string>
+    <string name="status_completed">Completed</string>
+    <string name="status_cancelled">Cancelled</string>
+    <string name="status_summary_pending">Pending</string>
+    <string name="status_summary_assigned">In progress</string>
+    <string name="status_summary_completed">Done</string>
+    <string name="status_summary_total">Total</string>
+    <string name="status_step_pending">Request created</string>
+    <string name="status_step_assigned">Worker assigned</string>
+    <string name="status_step_completed">Pickup completed</string>
+    <string name="status_step_rejected">Request cancelled</string>
+
+    <!-- Resident tabs -->
+    <string name="tab_home">Home</string>
+    <string name="tab_request">Request</string>
+    <string name="tab_history">History</string>
+    <string name="tab_schedule">Schedule</string>
+    <string name="tab_profile">Profile</string>
+    <string name="tab_request_title">Pickup Request</string>
+    <string name="tab_history_title">My Requests</string>
+
+    <!-- Worker tabs -->
+    <string name="tab_today">Today</string>
+    <string name="tab_collect">Collect</string>
+    <string name="tab_my_collections">History</string>
+    <string name="tab_today_title">Today’s Route</string>
+    <string name="tab_collect_title">New Collection</string>
+    <string name="tab_my_collections_title">My Collections</string>
+
+    <!-- Home -->
+    <string name="home_welcome">Welcome,</string>
+    <string name="home_my_points">My points</string>
+    <string name="home_new_request">+ New Request</string>
+    <string name="home_request_status">Request status</string>
+    <string name="home_upcoming">Upcoming pickup</string>
+    <string name="home_loading_schedule">Loading schedule…</string>
+    <string name="home_latest_requests">Latest requests</string>
+    <string name="home_see_all">See all →</string>
+    <string name="home_no_requests">You have no requests yet</string>
+    <string name="home_create_request">Create a request</string>
+
+    <!-- Request -->
+    <string name="request_material">Material</string>
+    <string name="request_address">Address</string>
+    <string name="request_address_placeholder">12 Lenin St., apt 5</string>
+    <string name="request_qty">Estimated weight (kg)</string>
+    <string name="request_qty_placeholder">5</string>
+    <string name="request_notes">Notes</string>
+    <string name="request_notes_placeholder">Please call before arriving…</string>
+    <string name="request_submit">Submit request</string>
+    <string name="request_submitting">Submitting…</string>
+    <string name="request_success_title">Request received!</string>
+    <string name="request_success_sub">Our worker will contact you and come pick up the materials.</string>
+    <string name="request_success_another">Submit another</string>
+    <string name="request_fill_required">Please fill in all required fields</string>
+    <string name="request_failed">Could not create request</string>
+
+    <!-- History -->
+    <string name="history_empty">No requests</string>
+    <string name="history_collected">Collected</string>
+
+    <!-- Schedule -->
+    <string name="schedule_loading">Loading schedule…</string>
+    <string name="schedule_not_found">Don’t see your area?</string>
+    <string name="schedule_not_found_desc">Call us: +996 700 000 001. For volumes 20+ kg we’ll come to any neighborhood!</string>
+
+    <!-- Profile -->
+    <string name="profile_my_points">My points</string>
+    <string name="profile_point_formula">1 kg = 1 point</string>
+    <string name="profile_point_sub">For every kg you bring in</string>
+    <string name="profile_personal_info">Personal info</string>
+    <string name="profile_field_name">Name</string>
+    <string name="profile_field_phone">Phone</string>
+    <string name="profile_field_address">Address</string>
+    <string name="profile_field_role">Role</string>
+    <string name="profile_edu_title">💡 Eco Education</string>
+    <string name="profile_edu_body">Did you know a PET bottle takes 400-450 years to decompose? Don’t burn — bring it to us!</string>
+    <string name="profile_language_title">🌐 Language</string>
+    <string name="profile_logout_btn">Sign out</string>
+
+    <!-- Today (worker) -->
+    <string name="today_welcome">Welcome,</string>
+    <string name="today_route">Today’s route</string>
+    <string name="today_no_route">No route assigned for today</string>
+    <string name="today_map">Map →</string>
+    <string name="today_assigned">Assigned requests</string>
+    <string name="today_no_assigned">No assigned requests</string>
+
+    <!-- Collect -->
+    <string name="collect_choose_request">Choose a request</string>
+    <string name="collect_no_assigned">No assigned requests</string>
+    <string name="collect_material">Material</string>
+    <string name="collect_actual_weight">Actual weight (kg)</string>
+    <string name="collect_photo">Photo (optional)</string>
+    <string name="collect_camera">📷 Camera</string>
+    <string name="collect_gallery">🖼 Gallery</string>
+    <string name="collect_notes">Notes</string>
+    <string name="collect_notes_placeholder">Quality, notes…</string>
+    <string name="collect_submit">Log collection</string>
+    <string name="collect_saving">Saving…</string>
+    <string name="collect_success_title">Collection logged!</string>
+    <string name="collect_success_sub">The request is marked complete. Points credited to the resident.</string>
+    <string name="collect_success_another">Log another</string>
+    <string name="collect_camera_permission">Camera permission is required</string>
+    <string name="collect_save_failed">Could not save</string>
+
+    <!-- My collections -->
+    <string name="myc_total">Total collections</string>
+    <string name="myc_total_weight">Total weight</string>
+    <string name="myc_resident">Resident</string>
+    <string name="myc_empty">No collection records</string>
+
+    <!-- Worker profile -->
+    <string name="wp_total_collections">Total collections</string>
+    <string name="wp_total_weight">Total weight (kg)</string>
+    <string name="wp_dispatcher_title">📞 Dispatcher contact</string>
+    <string name="wp_dispatcher_body">For routes and request issues call: +996 700 000 001 (Aibek)</string>
+
+    <!-- Days short -->
+    <string-array name="days_short">
+        <item>Mon</item>
+        <item>Tue</item>
+        <item>Wed</item>
+        <item>Thu</item>
+        <item>Fri</item>
+        <item>Sat</item>
+        <item>Sun</item>
+    </string-array>
+
+    <string-array name="days_full">
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+        <item>Sunday</item>
+    </string-array>
+</resources>

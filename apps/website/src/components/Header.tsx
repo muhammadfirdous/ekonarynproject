@@ -3,17 +3,10 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { Recycle, Menu, X } from 'lucide-react';
-
-const navLinks = [
-  { href: '/', label: 'Главная' },
-  { href: '/about', label: 'О нас' },
-  { href: '/materials', label: 'Материалы' },
-  { href: '/schedule', label: 'Расписание' },
-  { href: '/education', label: 'Экообразование' },
-  { href: '/contact', label: 'Контакты' },
-];
+import { useT, LanguageToggle } from '@/lib/i18n';
 
 export default function Header() {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -22,6 +15,15 @@ export default function Header() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const navLinks = [
+    { href: '/', label: t('nav.home') },
+    { href: '/about', label: t('nav.about') },
+    { href: '/materials', label: t('nav.materials') },
+    { href: '/schedule', label: t('nav.schedule') },
+    { href: '/education', label: t('nav.education') },
+    { href: '/contact', label: t('nav.contact') },
+  ];
 
   return (
     <header
@@ -36,7 +38,7 @@ export default function Header() {
           <div className="w-8 h-8 bg-brand-700 rounded-lg flex items-center justify-center transition-transform duration-200 group-hover:scale-105">
             <Recycle className="h-5 w-5 text-white" />
           </div>
-          <span className="text-lg font-bold text-neutral-900">Эко Нарын</span>
+          <span className="text-lg font-bold text-neutral-900">{t('brand')}</span>
         </Link>
 
         {/* Desktop nav */}
@@ -50,11 +52,12 @@ export default function Header() {
               {link.label}
             </Link>
           ))}
+          <LanguageToggle className="ml-3" />
           <Link
             href="/request"
             className="ml-3 bg-brand-700 text-white px-5 py-2 rounded-full text-sm font-semibold shadow-brand hover:bg-brand-900 hover:-translate-y-[1px] hover:shadow-brand-lg transition-all duration-200"
           >
-            Заявка на сбор
+            {t('nav.cta')}
           </Link>
         </nav>
 
@@ -74,6 +77,9 @@ export default function Header() {
         }`}
       >
         <nav className="border-t border-neutral-100 bg-white/95 backdrop-blur-md px-4 py-4 space-y-1">
+          <div className="px-1 pb-2">
+            <LanguageToggle />
+          </div>
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -89,7 +95,7 @@ export default function Header() {
             onClick={() => setOpen(false)}
             className="block bg-brand-700 text-white text-center px-4 py-2.5 rounded-full font-semibold text-sm mt-3 shadow-brand"
           >
-            Заявка на сбор
+            {t('nav.cta')}
           </Link>
         </nav>
       </div>

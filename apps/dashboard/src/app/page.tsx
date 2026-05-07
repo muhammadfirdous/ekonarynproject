@@ -4,10 +4,11 @@ import DashboardLayout from '@/components/DashboardLayout';
 import StatsCard from '@/components/ui/StatsCard';
 import PageHeader from '@/components/ui/PageHeader';
 import { useApi } from '@/lib/hooks';
-import { formatMoney, formatWeight, formatDate, statusColors, statusLabels } from '@/lib/utils';
-import { Package, Truck, Users, DollarSign, ClipboardList, Scale, ArrowRight } from 'lucide-react';
+import { formatMoney, formatWeight, formatDate, statusColors } from '@/lib/utils';
+import { Package, Users, DollarSign, ClipboardList, Scale, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { useT, useLocalized, useTArray } from '@/lib/i18n';
 import {
   BarChart,
   Bar,
@@ -37,57 +38,59 @@ interface Request {
   estimatedQty: number;
   createdAt: string;
   resident: { name: string };
-  material: { nameRu: string };
-}
-
-interface MonthlyData {
-  month: string;
-  weight: number;
-}
-
-interface MaterialData {
-  name: string;
-  weight: number;
+  material: { name: string; nameRu: string };
 }
 
 const CHART_COLORS = ['#2E7D32', '#4CAF50', '#81C784', '#A5D6A7'];
 
-// Simple sparkline for weight card
-const weeklyData = [
-  { day: 'Пн', value: 42 },
-  { day: 'Вт', value: 38 },
-  { day: 'Ср', value: 55 },
-  { day: 'Чт', value: 47 },
-  { day: 'Пт', value: 63 },
-  { day: 'Сб', value: 51 },
-  { day: 'Вс', value: 35 },
-];
-
-// Mock data for charts (would come from API in production)
-const monthlyChartData = [
-  { month: 'Янв', weight: 320 },
-  { month: 'Фев', weight: 450 },
-  { month: 'Мар', weight: 380 },
-  { month: 'Апр', weight: 520 },
-  { month: 'Май', weight: 610 },
-  { month: 'Июн', weight: 480 },
-  { month: 'Июл', weight: 550 },
-];
-
-const materialsChartData = [
-  { name: 'ПЭТ пластик', value: 45 },
-  { name: 'HDPE пластик', value: 20 },
-  { name: 'Картон', value: 25 },
-  { name: 'Бумага', value: 10 },
-];
+function RequestRow({ req }: { req: Request }) {
+  const t = useT();
+  const matName = useLocalized(req.material, { ru: 'nameRu', en: 'name' });
+  return (
+    <div className="px-6 py-4 flex items-center justify-between hover:bg-neutral-50/50 transition-colors">
+      <div className="flex items-center gap-3">
+        <div className="w-9 h-9 bg-brand-50 rounded-lg flex items-center justify-center flex-shrink-0">
+          <span className="text-xs font-bold text-brand-700">{req.resident?.name?.[0] || '?'}</span>
+        </div>
+        <div>
+          <p className="text-sm font-medium text-neutral-900">{req.resident?.name}</p>
+          <p className="text-[13px] text-neutral-500 mt-0.5">
+            {matName} · {req.estimatedQty} {t('common.kg')} · {req.address}
+          </p>
+        </div>
+      </div>
+      <div className="text-right flex-shrink-0 ml-4">
+        <span className={cn('inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium', statusColors[req.status])}>
+          {t(`status.${req.status}`)}
+        </span>
+        <p className="text-[13px] text-neutral-400 mt-1">{formatDate(req.createdAt)}</p>
+      </div>
+    </div>
+  );
+}
 
 export default function OverviewPage() {
+  const t = useT();
+  const monthsShort = useTArray('overview.monthsShort');
   const { data: overview, loading } = useApi<Overview>('/analytics/overview');
   const { data: requests } = useApi<Request[]>('/requests?limit=5');
 
+  // Mock data for charts
+  const monthlyChartData = monthsShort.slice(0, 7).map((month, i) => ({
+    month,
+    weight: [320, 450, 380, 520, 610, 480, 550][i] ?? 0,
+  }));
+
+  const materialsChartData = [
+    { name: t('overview.materialPet'), value: 45 },
+    { name: t('overview.materialHdpe'), value: 20 },
+    { name: t('overview.materialCardboard'), value: 25 },
+    { name: t('overview.materialPaper'), value: 10 },
+  ];
+
   return (
     <DashboardLayout>
-      <PageHeader title="Обзор" description="Панель управления Эко Нарын" />
+      <PageHeader title={t('pageTitles./')} description={t('overview.description')} />
 
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -99,58 +102,38 @@ export default function OverviewPage() {
         <>
           {/* Stat cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
-            <StatsCard title="Всего сборов" value={overview.totalCollections} icon={Package} trend={{ value: 12, label: 'vs прошлый мес.' }} />
-            <StatsCard title="Общий вес" value={formatWeight(overview.totalWeightKg)} icon={Scale} />
-            <StatsCard title="Общая выручка" value={formatMoney(overview.totalRevenue)} icon={DollarSign} variant="accent" />
-            <StatsCard title="Работников" value={overview.activeWorkers} icon={Users} />
-            <StatsCard title="Жителей" value={overview.totalResidents} icon={Users} />
-            <StatsCard title="Ожидающие заявки" value={overview.pendingRequests} icon={ClipboardList} />
+            <StatsCard title={t('overview.totalCollections')} value={overview.totalCollections} icon={Package} trend={{ value: 12, label: t('overview.trendVsLast') }} />
+            <StatsCard title={t('overview.totalWeight')} value={formatWeight(overview.totalWeightKg)} icon={Scale} />
+            <StatsCard title={t('overview.totalRevenue')} value={formatMoney(overview.totalRevenue)} icon={DollarSign} variant="accent" />
+            <StatsCard title={t('overview.workers')} value={overview.activeWorkers} icon={Users} />
+            <StatsCard title={t('overview.residents')} value={overview.totalResidents} icon={Users} />
+            <StatsCard title={t('overview.pendingRequests')} value={overview.pendingRequests} icon={ClipboardList} />
           </div>
 
           {/* Latest applications card */}
           <div className="bg-white rounded-2xl border border-neutral-100 shadow-card mb-8">
             <div className="px-6 py-5 border-b border-neutral-100 flex items-center justify-between">
-              <h2 className="text-[16px] font-semibold text-neutral-900">Последние заявки</h2>
+              <h2 className="text-[16px] font-semibold text-neutral-900">{t('overview.latestRequests')}</h2>
               <Link href="/requests" className="text-sm text-brand-600 hover:text-brand-700 font-medium flex items-center gap-1 transition-colors">
-                Все заявки
+                {t('overview.allRequests')}
                 <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>
             <div className="divide-y divide-neutral-50">
               {requests && requests.length > 0 ? (
-                requests.map((req) => (
-                  <div key={req.id} className="px-6 py-4 flex items-center justify-between hover:bg-neutral-50/50 transition-colors">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 bg-brand-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <span className="text-xs font-bold text-brand-700">{req.resident?.name?.[0] || '?'}</span>
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-neutral-900">{req.resident?.name}</p>
-                        <p className="text-[13px] text-neutral-500 mt-0.5">
-                          {req.material?.nameRu} · {req.estimatedQty} кг · {req.address}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="text-right flex-shrink-0 ml-4">
-                      <span className={cn('inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium', statusColors[req.status])}>
-                        {statusLabels[req.status]}
-                      </span>
-                      <p className="text-[13px] text-neutral-400 mt-1">{formatDate(req.createdAt)}</p>
-                    </div>
-                  </div>
-                ))
+                requests.map((req) => <RequestRow key={req.id} req={req} />)
               ) : (
-                <div className="px-6 py-12 text-center text-neutral-500 text-sm">Нет заявок</div>
+                <div className="px-6 py-12 text-center text-neutral-500 text-sm">{t('overview.noRequests')}</div>
               )}
             </div>
           </div>
 
           {/* Charts row */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            {/* Bar chart - Collections this month */}
+            {/* Bar chart - Collections by month */}
             <div className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6">
-              <h3 className="text-[16px] font-semibold text-neutral-900 mb-1">Сборы по месяцам</h3>
-              <p className="text-[13px] text-neutral-500 mb-5">Вес собранных материалов (кг)</p>
+              <h3 className="text-[16px] font-semibold text-neutral-900 mb-1">{t('overview.monthlyTitle')}</h3>
+              <p className="text-[13px] text-neutral-500 mb-5">{t('overview.monthlySub')}</p>
               <div className="h-[240px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={monthlyChartData}>
@@ -164,7 +147,7 @@ export default function OverviewPage() {
                         boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
                         fontSize: '13px',
                       }}
-                      formatter={(value: number) => [`${value} кг`, 'Вес']}
+                      formatter={(value: number) => [`${value} ${t('common.kg')}`, t('overview.weightTooltip')]}
                     />
                     <Bar dataKey="weight" fill="#4CAF50" radius={[6, 6, 0, 0]} />
                   </BarChart>
@@ -174,8 +157,8 @@ export default function OverviewPage() {
 
             {/* Donut chart - Materials breakdown */}
             <div className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6">
-              <h3 className="text-[16px] font-semibold text-neutral-900 mb-1">Распределение материалов</h3>
-              <p className="text-[13px] text-neutral-500 mb-5">Процентное соотношение по типу</p>
+              <h3 className="text-[16px] font-semibold text-neutral-900 mb-1">{t('overview.materialsTitle')}</h3>
+              <p className="text-[13px] text-neutral-500 mb-5">{t('overview.materialsSub')}</p>
               <div className="h-[240px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -200,7 +183,7 @@ export default function OverviewPage() {
                         boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
                         fontSize: '13px',
                       }}
-                      formatter={(value: number) => [`${value}%`, 'Доля']}
+                      formatter={(value: number) => [`${value}%`, t('overview.shareTooltip')]}
                     />
                     <Legend
                       verticalAlign="bottom"

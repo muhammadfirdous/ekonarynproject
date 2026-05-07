@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { Recycle, TreePine, Droplets } from 'lucide-react';
+import { useT } from '@/lib/i18n';
 
 function useCountUp(target: number, duration = 2000) {
   const [count, setCount] = useState(0);
@@ -33,28 +34,13 @@ function useCountUp(target: number, duration = 2000) {
   return { count, ref };
 }
 
-const stats = [
-  {
-    icon: Recycle,
-    target: 5000,
-    suffix: '',
-    label: 'КГ МАТЕРИАЛОВ СОБРАНО',
-  },
-  {
-    icon: TreePine,
-    target: 85,
-    suffix: '',
-    label: 'ДЕРЕВЬЕВ СОХРАНЕНО',
-  },
-  {
-    icon: Droplets,
-    target: 12000,
-    suffix: '',
-    label: 'ЛИТРОВ ВОДЫ СЭКОНОМЛЕНО',
-  },
-];
-
 export default function ImpactCounter() {
+  const t = useT();
+  const stats = [
+    { icon: Recycle, target: 5000, label: t('impact.materials') },
+    { icon: TreePine, target: 85, label: t('impact.trees') },
+    { icon: Droplets, target: 12000, label: t('impact.water') },
+  ];
   const counters = stats.map((s) => useCountUp(s.target));
 
   return (

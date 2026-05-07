@@ -6,8 +6,8 @@ import PageHeader from '@/components/ui/PageHeader';
 import { useApi } from '@/lib/hooks';
 import { useAuth } from '@/lib/auth';
 import { api } from '@/lib/api';
-import { formatMoney } from '@/lib/utils';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { useT, useLang } from '@/lib/i18n';
 
 interface Material {
   id: string;
@@ -23,6 +23,8 @@ interface Material {
 const emptyForm = { name: '', nameKy: '', nameRu: '', buyingPrice: '', sellingPrice: '', unit: 'kg', description: '' };
 
 export default function MaterialsPage() {
+  const t = useT();
+  const { lang } = useLang();
   const { token } = useAuth();
   const { data, loading, refetch } = useApi<Material[]>('/materials');
   const [editing, setEditing] = useState<string | null>(null);
@@ -59,30 +61,30 @@ export default function MaterialsPage() {
       setForm(emptyForm);
       refetch();
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed');
+      alert(err instanceof Error ? err.message : t('common.failed'));
     } finally {
       setSaving(false);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Удалить этот материал?')) return;
+    if (!confirm(t('materials.confirmDelete'))) return;
     try {
       await api.delete(`/materials/${id}`, token!);
       refetch();
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed');
+      alert(err instanceof Error ? err.message : t('common.failed'));
     }
   };
 
   return (
     <DashboardLayout>
       <PageHeader
-        title="Материалы"
-        description="Управление ценами и материалами"
+        title={t('materials.title')}
+        description={t('materials.description')}
         action={
           <button onClick={() => { setShowForm(!showForm); setEditing(null); setForm(emptyForm); }} className="inline-flex items-center gap-2 bg-brand-700 text-white px-4 py-2 rounded-lg hover:bg-brand-900">
-            <Plus className="h-4 w-4" /> Добавить
+            <Plus className="h-4 w-4" /> {t('materials.addButton')}
           </button>
         }
       />
@@ -91,37 +93,39 @@ export default function MaterialsPage() {
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6 mb-6">
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium mb-1.5">Name (EN)</label>
+              <label className="block text-sm font-medium mb-1.5">{t('materials.nameEn')}</label>
               <input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg" required />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1.5">Название (KY)</label>
+              <label className="block text-sm font-medium mb-1.5">{t('materials.nameKy')}</label>
               <input value={form.nameKy} onChange={(e) => setForm((f) => ({ ...f, nameKy: e.target.value }))} className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg" required />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1.5">Название (RU)</label>
+              <label className="block text-sm font-medium mb-1.5">{t('materials.nameRu')}</label>
               <input value={form.nameRu} onChange={(e) => setForm((f) => ({ ...f, nameRu: e.target.value }))} className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg" required />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1.5">Единица</label>
+              <label className="block text-sm font-medium mb-1.5">{t('materials.unit')}</label>
               <input value={form.unit} onChange={(e) => setForm((f) => ({ ...f, unit: e.target.value }))} className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg" />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1.5">Цена закупки (сом/{form.unit})</label>
+              <label className="block text-sm font-medium mb-1.5">{t('materials.buyingPrice', { unit: form.unit })}</label>
               <input type="number" step="0.5" min="0" value={form.buyingPrice} onChange={(e) => setForm((f) => ({ ...f, buyingPrice: e.target.value }))} className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg" required />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1.5">Цена продажи (сом/{form.unit})</label>
+              <label className="block text-sm font-medium mb-1.5">{t('materials.sellingPrice', { unit: form.unit })}</label>
               <input type="number" step="0.5" min="0" value={form.sellingPrice} onChange={(e) => setForm((f) => ({ ...f, sellingPrice: e.target.value }))} className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg" required />
             </div>
             <div className="col-span-2">
-              <label className="block text-sm font-medium mb-1.5">Описание</label>
+              <label className="block text-sm font-medium mb-1.5">{t('materials.description2')}</label>
               <textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg" rows={2} />
             </div>
           </div>
           <div className="flex gap-3">
-            <button type="submit" disabled={saving} className="bg-brand-700 text-white px-6 py-2 rounded-lg disabled:opacity-50">{saving ? 'Сохранение...' : editing ? 'Обновить' : 'Создать'}</button>
-            <button type="button" onClick={() => { setShowForm(false); setEditing(null); }} className="px-6 py-2 border border-neutral-200 rounded-lg">Отмена</button>
+            <button type="submit" disabled={saving} className="bg-brand-700 text-white px-6 py-2 rounded-lg disabled:opacity-50">
+              {saving ? t('common.saving') : editing ? t('common.update') : t('common.create')}
+            </button>
+            <button type="button" onClick={() => { setShowForm(false); setEditing(null); }} className="px-6 py-2 border border-neutral-200 rounded-lg">{t('common.cancel')}</button>
           </div>
         </form>
       )}
@@ -132,35 +136,40 @@ export default function MaterialsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {data?.map((m) => (
-            <div key={m.id} className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="font-semibold text-neutral-900">{m.nameRu}</h3>
-                  <p className="text-sm text-neutral-500">{m.nameKy} · {m.name}</p>
+          {data?.map((m) => {
+            const primary = lang === 'ru' ? m.nameRu : m.name;
+            const sub = lang === 'ru' ? `${m.nameKy} · ${m.name}` : `${m.nameKy} · ${m.nameRu}`;
+            const cur = t('common.currency');
+            return (
+              <div key={m.id} className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="font-semibold text-neutral-900">{primary}</h3>
+                    <p className="text-sm text-neutral-500">{sub}</p>
+                  </div>
+                  <div className="flex gap-1">
+                    <button onClick={() => startEdit(m)} className="p-1.5 hover:bg-neutral-100 rounded"><Pencil className="h-4 w-4 text-neutral-500" /></button>
+                    <button onClick={() => handleDelete(m.id)} className="p-1.5 hover:bg-red-50 rounded"><Trash2 className="h-4 w-4 text-red-400" /></button>
+                  </div>
                 </div>
-                <div className="flex gap-1">
-                  <button onClick={() => startEdit(m)} className="p-1.5 hover:bg-neutral-100 rounded"><Pencil className="h-4 w-4 text-neutral-500" /></button>
-                  <button onClick={() => handleDelete(m.id)} className="p-1.5 hover:bg-red-50 rounded"><Trash2 className="h-4 w-4 text-red-400" /></button>
+                <div className="mt-4 flex gap-6">
+                  <div>
+                    <p className="text-xs text-neutral-500">{t('materials.buying')}</p>
+                    <p className="font-semibold text-neutral-900">{m.buyingPrice} {cur}/{m.unit}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-neutral-500">{t('materials.selling')}</p>
+                    <p className="font-semibold text-green-600">{m.sellingPrice} {cur}/{m.unit}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-neutral-500">{t('materials.margin')}</p>
+                    <p className="font-semibold text-brand-700">{m.sellingPrice - m.buyingPrice} {cur}/{m.unit}</p>
+                  </div>
                 </div>
+                {m.description && <p className="mt-3 text-sm text-neutral-500">{m.description}</p>}
               </div>
-              <div className="mt-4 flex gap-6">
-                <div>
-                  <p className="text-xs text-neutral-500">Закупка</p>
-                  <p className="font-semibold text-neutral-900">{m.buyingPrice} сом/{m.unit}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-neutral-500">Продажа</p>
-                  <p className="font-semibold text-green-600">{m.sellingPrice} сом/{m.unit}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-neutral-500">Маржа</p>
-                  <p className="font-semibold text-brand-700">{m.sellingPrice - m.buyingPrice} сом/{m.unit}</p>
-                </div>
-              </div>
-              {m.description && <p className="mt-3 text-sm text-neutral-500">{m.description}</p>}
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </DashboardLayout>

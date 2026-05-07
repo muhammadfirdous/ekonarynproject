@@ -8,6 +8,7 @@ import { useAuth } from '@/lib/auth';
 import { api } from '@/lib/api';
 import { formatDate } from '@/lib/utils';
 import { MapPin, Plus, User } from 'lucide-react';
+import { useT } from '@/lib/i18n';
 
 interface Stop {
   address: string;
@@ -30,6 +31,7 @@ interface Worker {
 }
 
 export default function RoutesPage() {
+  const t = useT();
   const { token } = useAuth();
   const { data: routes, loading, refetch } = useApi<Route[]>('/routes');
   const { data: workers } = useApi<Worker[]>('/users?role=WORKER');
@@ -59,7 +61,7 @@ export default function RoutesPage() {
       setForm({ workerId: '', date: '', stops: [{ address: '', order: 1, notes: '' }] });
       refetch();
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed');
+      alert(err instanceof Error ? err.message : t('common.failed'));
     } finally {
       setSaving(false);
     }
@@ -68,15 +70,15 @@ export default function RoutesPage() {
   return (
     <DashboardLayout>
       <PageHeader
-        title="Маршруты"
-        description="Планирование маршрутов сбора"
+        title={t('routes.title')}
+        description={t('routes.description')}
         action={
           <button
             onClick={() => setShowForm(!showForm)}
             className="inline-flex items-center gap-2 bg-brand-700 text-white px-4 py-2 rounded-lg hover:bg-brand-900"
           >
             <Plus className="h-4 w-4" />
-            Новый маршрут
+            {t('routes.newButton')}
           </button>
         }
       />
@@ -85,21 +87,21 @@ export default function RoutesPage() {
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6 mb-6">
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-neutral-900 mb-1.5">Работник</label>
+              <label className="block text-sm font-medium text-neutral-900 mb-1.5">{t('routes.worker')}</label>
               <select
                 value={form.workerId}
                 onChange={(e) => setForm((f) => ({ ...f, workerId: e.target.value }))}
                 className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg"
                 required
               >
-                <option value="">Выберите работника</option>
+                <option value="">{t('routes.chooseWorker')}</option>
                 {workers?.map((w) => (
                   <option key={w.id} value={w.id}>{w.name}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-neutral-900 mb-1.5">Дата</label>
+              <label className="block text-sm font-medium text-neutral-900 mb-1.5">{t('routes.date')}</label>
               <input
                 type="date"
                 value={form.date}
@@ -110,14 +112,14 @@ export default function RoutesPage() {
             </div>
           </div>
 
-          <label className="block text-sm font-medium text-neutral-900 mb-2">Остановки</label>
+          <label className="block text-sm font-medium text-neutral-900 mb-2">{t('routes.stops')}</label>
           {form.stops.map((stop, i) => (
             <div key={i} className="flex gap-2 mb-2">
               <span className="flex items-center justify-center w-8 h-10 bg-brand-50 rounded text-sm font-medium text-brand-700">
                 {i + 1}
               </span>
               <input
-                placeholder="Адрес"
+                placeholder={t('routes.address')}
                 value={stop.address}
                 onChange={(e) => {
                   const stops = [...form.stops];
@@ -128,7 +130,7 @@ export default function RoutesPage() {
                 required
               />
               <input
-                placeholder="Заметка"
+                placeholder={t('routes.note')}
                 value={stop.notes}
                 onChange={(e) => {
                   const stops = [...form.stops];
@@ -143,15 +145,15 @@ export default function RoutesPage() {
             </div>
           ))}
           <button type="button" onClick={addStop} className="text-sm text-brand-700 hover:underline mt-1 mb-4">
-            + Добавить остановку
+            {t('routes.addStop')}
           </button>
 
           <div className="flex gap-3">
             <button type="submit" disabled={saving} className="bg-brand-700 text-white px-6 py-2 rounded-lg disabled:opacity-50">
-              {saving ? 'Сохранение...' : 'Создать маршрут'}
+              {saving ? t('common.saving') : t('routes.createButton')}
             </button>
             <button type="button" onClick={() => setShowForm(false)} className="px-6 py-2 border border-neutral-200 rounded-lg">
-              Отмена
+              {t('common.cancel')}
             </button>
           </div>
         </form>
@@ -175,7 +177,7 @@ export default function RoutesPage() {
                   <span className={`text-xs px-2 py-1 rounded-full ${
                     route.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
                   }`}>
-                    {route.status === 'active' ? 'Активный' : 'Завершен'}
+                    {route.status === 'active' ? t('routes.statusActive') : t('routes.statusFinished')}
                   </span>
                 </div>
                 <div className="space-y-2">
@@ -194,7 +196,7 @@ export default function RoutesPage() {
               </div>
             ))
           ) : (
-            <div className="bg-white rounded-2xl p-8 text-center text-neutral-500">Нет маршрутов</div>
+            <div className="bg-white rounded-2xl p-8 text-center text-neutral-500">{t('routes.empty')}</div>
           )}
         </div>
       )}

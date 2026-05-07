@@ -41,3 +41,11 @@ coverage/
 
 # Claude
 .claude/
+
+# Android / Gradle
+**/build/
+.gradle/
+local.properties
+*.iml
+captures/
+.cxx/

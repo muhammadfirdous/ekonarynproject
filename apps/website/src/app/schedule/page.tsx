@@ -1,7 +1,9 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import { API_URL } from '@/lib/utils';
 import { Clock, MapPin } from 'lucide-react';
-
-const DAY_NAMES = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
+import { useT } from '@/lib/i18n';
 
 interface Schedule {
   id: string;
@@ -11,18 +13,26 @@ interface Schedule {
   active: boolean;
 }
 
-async function getSchedule(): Promise<Schedule[]> {
-  try {
-    const res = await fetch(`${API_URL}/schedule`, { next: { revalidate: 300 } });
-    const data = await res.json();
-    return data.data || [];
-  } catch {
-    return [];
-  }
-}
+export default function SchedulePage() {
+  const t = useT();
+  const [schedule, setSchedule] = useState<Schedule[]>([]);
 
-export default async function SchedulePage() {
-  const schedule = await getSchedule();
+  useEffect(() => {
+    fetch(`${API_URL}/schedule`)
+      .then((r) => r.json())
+      .then((d) => setSchedule(d.data || []))
+      .catch(() => {});
+  }, []);
+
+  const dayNames = [
+    t('schedule.monday'),
+    t('schedule.tuesday'),
+    t('schedule.wednesday'),
+    t('schedule.thursday'),
+    t('schedule.friday'),
+    t('schedule.saturday'),
+    t('schedule.sunday'),
+  ];
 
   // Group by day
   const byDay: Record<number, Schedule[]> = {};
@@ -38,10 +48,12 @@ export default async function SchedulePage() {
         <div className="absolute top-0 right-0 w-72 h-72 bg-brand-300/15 rounded-full blur-3xl" />
         <div className="relative max-w-4xl mx-auto px-4 text-center">
           <span className="inline-flex items-center gap-1.5 bg-brand-100 text-brand-700 text-sm font-medium px-3 py-1 rounded-full border border-brand-200 mb-5">
-            График работы
+            {t('schedule.badge')}
           </span>
-          <h1 className="text-4xl lg:text-5xl font-extrabold text-neutral-900 tracking-tight">Расписание сбора</h1>
-          <p className="mt-4 text-lg text-neutral-500">Когда мы приезжаем в ваш район</p>
+          <h1 className="text-4xl lg:text-5xl font-extrabold text-neutral-900 tracking-tight">
+            {t('schedule.title')}
+          </h1>
+          <p className="mt-4 text-lg text-neutral-500">{t('schedule.sub')}</p>
         </div>
       </section>
 
@@ -49,7 +61,7 @@ export default async function SchedulePage() {
         <div className="max-w-4xl mx-auto px-4">
           {schedule.length > 0 ? (
             <div className="space-y-4">
-              {DAY_NAMES.map((dayName, dayIndex) => {
+              {dayNames.map((dayName, dayIndex) => {
                 const daySchedule = byDay[dayIndex];
                 if (!daySchedule) return null;
                 return (
@@ -79,17 +91,16 @@ export default async function SchedulePage() {
             </div>
           ) : (
             <div className="bg-neutral-50 rounded-2xl p-8 text-center text-neutral-500 border border-neutral-100">
-              <p>Расписание загружается с сервера.</p>
-              <p className="mt-2">Позвоните нам: <strong>+996 700 000 001</strong></p>
+              <p>{t('schedule.empty')}</p>
+              <p className="mt-2">
+                {t('schedule.callUs')} <strong>+996 700 000 001</strong>
+              </p>
             </div>
           )}
 
           <div className="mt-8 bg-brand-50 rounded-2xl border border-brand-100 p-6">
-            <h3 className="font-semibold text-neutral-900 mb-2">Не нашли свой район?</h3>
-            <p className="text-sm text-neutral-500 leading-relaxed">
-              Мы расширяем зону покрытия! Оставьте заявку, и мы постараемся приехать к вам.
-              Для больших объемов (от 20 кг) мы приедем в любой район Нарына.
-            </p>
+            <h3 className="font-semibold text-neutral-900 mb-2">{t('schedule.notFoundTitle')}</h3>
+            <p className="text-sm text-neutral-500 leading-relaxed">{t('schedule.notFoundDesc')}</p>
           </div>
         </div>
       </section>

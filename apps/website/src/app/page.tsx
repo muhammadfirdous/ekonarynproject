@@ -1,15 +1,20 @@
+'use client';
+
 import Link from 'next/link';
 import ImpactCounter from '@/components/ImpactCounter';
 import { ArrowRight, Recycle, Truck, DollarSign, Leaf, Scale, TrendingUp, Sparkles } from 'lucide-react';
-
-const steps = [
-  { icon: Recycle, title: 'Соберите', desc: 'Отделите пластик, картон и бумагу от обычного мусора' },
-  { icon: Truck, title: 'Мы заберем', desc: 'Оставьте заявку — наш работник приедет в удобное время' },
-  { icon: DollarSign, title: 'Получите оплату', desc: 'Мы платим 5 сом/кг за пластиковые бутылки' },
-  { icon: Leaf, title: 'Спасите природу', desc: 'Ваши материалы переработаны, а не сожжены' },
-];
+import { useT } from '@/lib/i18n';
 
 export default function Home() {
+  const t = useT();
+
+  const steps = [
+    { icon: Recycle, title: t('home.step1Title'), desc: t('home.step1Desc') },
+    { icon: Truck, title: t('home.step2Title'), desc: t('home.step2Desc') },
+    { icon: DollarSign, title: t('home.step3Title'), desc: t('home.step3Desc') },
+    { icon: Leaf, title: t('home.step4Title'), desc: t('home.step4Desc') },
+  ];
+
   return (
     <main>
       {/* Hero */}
@@ -23,18 +28,17 @@ export default function Home() {
             {/* Left: Text */}
             <div>
               <span className="inline-flex items-center gap-1.5 bg-brand-100 text-brand-700 text-sm font-medium px-3 py-1 rounded-full border border-brand-200 mb-6">
-                <span>♻</span> Нарын, Кыргызстан
+                <span>♻</span> {t('home.badge')}
               </span>
 
               <h1 className="text-5xl lg:text-[56px] font-extrabold text-neutral-900 leading-[1.1] tracking-tight">
-                Чистый Нарын —
+                {t('home.heroTitle1')}
                 <br />
-                <span className="text-brand-700">наша общая цель</span>
+                <span className="text-brand-700">{t('home.heroTitle2')}</span>
               </h1>
 
               <p className="mt-6 text-lg text-neutral-500 max-w-[480px] leading-relaxed">
-                Мы собираем пластик, картон и бумагу у жителей Нарына.
-                Не сжигайте — сдавайте нам! Вместе мы делаем наш город чище.
+                {t('home.heroSub')}
               </p>
 
               <div className="mt-8 flex flex-col sm:flex-row gap-3">
@@ -42,14 +46,14 @@ export default function Home() {
                   href="/request"
                   className="inline-flex items-center justify-center gap-2 bg-brand-700 text-white px-6 py-3 rounded-xl font-semibold hover:bg-brand-900 hover:-translate-y-[1px] hover:shadow-lg transition-all duration-200"
                 >
-                  Оставить заявку
+                  {t('home.ctaPrimary')}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
                   href="/about"
                   className="inline-flex items-center justify-center gap-2 bg-white text-neutral-700 border border-neutral-200 px-6 py-3 rounded-xl font-semibold hover:border-brand-300 hover:text-brand-700 transition-all duration-200"
                 >
-                  Узнать больше
+                  {t('home.ctaSecondary')}
                 </Link>
               </div>
             </div>
@@ -63,8 +67,8 @@ export default function Home() {
                     <Scale className="h-5 w-5 text-brand-700" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-neutral-900">5 тонн</p>
-                    <p className="text-sm text-neutral-500">Собрано за год</p>
+                    <p className="text-2xl font-bold text-neutral-900">{t('home.cardTons')}</p>
+                    <p className="text-sm text-neutral-500">{t('home.cardTonsLabel')}</p>
                   </div>
                 </div>
               </div>
@@ -76,8 +80,8 @@ export default function Home() {
                     <TrendingUp className="h-5 w-5 text-brand-700" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-neutral-900">5 → 10 сом</p>
-                    <p className="text-sm text-neutral-500">За бутылку</p>
+                    <p className="text-2xl font-bold text-neutral-900">{t('home.cardPrice')}</p>
+                    <p className="text-sm text-neutral-500">{t('home.cardPriceLabel')}</p>
                   </div>
                 </div>
               </div>
@@ -89,8 +93,8 @@ export default function Home() {
                     <Sparkles className="h-5 w-5 text-brand-700" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-neutral-900">Нарын чище</p>
-                    <p className="text-sm text-neutral-500">Каждый день</p>
+                    <p className="text-2xl font-bold text-neutral-900">{t('home.cardCity')}</p>
+                    <p className="text-sm text-neutral-500">{t('home.cardCityLabel')}</p>
                   </div>
                 </div>
               </div>
@@ -103,10 +107,8 @@ export default function Home() {
       <section className="py-24 bg-white">
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-neutral-900">Как это работает</h2>
-            <p className="text-neutral-500 mt-3 max-w-lg mx-auto">
-              Простой процесс в 4 шага — от сортировки до переработки
-            </p>
+            <h2 className="text-3xl font-bold text-neutral-900">{t('home.howTitle')}</h2>
+            <p className="text-neutral-500 mt-3 max-w-lg mx-auto">{t('home.howSub')}</p>
           </div>
 
           {/* Steps with connecting line */}
@@ -145,16 +147,13 @@ export default function Home() {
       {/* CTA */}
       <section className="py-24 bg-background">
         <div className="max-w-3xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold text-neutral-900 mb-4">Готовы начать?</h2>
-          <p className="text-neutral-500 mb-8 text-lg leading-relaxed">
-            Оставьте заявку на сбор прямо сейчас. Наш работник приедет к вам и заберет материалы.
-            Это бесплатно — мы платим вам!
-          </p>
+          <h2 className="text-3xl font-bold text-neutral-900 mb-4">{t('home.finalCtaTitle')}</h2>
+          <p className="text-neutral-500 mb-8 text-lg leading-relaxed">{t('home.finalCtaSub')}</p>
           <Link
             href="/request"
             className="inline-flex items-center gap-2 bg-brand-700 text-white px-8 py-3.5 rounded-xl font-semibold hover:bg-brand-900 hover:-translate-y-[1px] hover:shadow-lg transition-all duration-200 text-lg"
           >
-            Оставить заявку на сбор
+            {t('home.finalCtaBtn')}
             <ArrowRight className="h-5 w-5" />
           </Link>
         </div>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Эко Нарын</string>
+    <string name="brand">Эко Нарын</string>
+    <string name="brand_sub">Вход в приложение</string>
+
+    <string name="loading">Загрузка…</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Отмена</string>
+    <string name="save">Сохранить</string>
+    <string name="saving">Сохранение…</string>
+    <string name="submit">Отправить</string>
+    <string name="submitting">Отправка…</string>
+    <string name="error">Ошибка</string>
+    <string name="kg">кг</string>
+    <string name="currency">сом</string>
+    <string name="kg_qty_format">%1$.1f кг</string>
+    <string name="estimate_format">Оценка: ~%1$s кг</string>
+    <string name="material_price_format">%1$s · %2$.0f сом/%3$s</string>
+    <string name="all">Все</string>
+    <string name="none">Не указан</string>
+    <string name="pull_to_refresh">Потяните вниз для обновления</string>
+    <string name="failed">Не удалось выполнить операцию</string>
+
+    <string name="auth_phone">Телефон</string>
+    <string name="auth_phone_placeholder">+996700000001</string>
+    <string name="auth_phone_placeholder2">+996700123456</string>
+    <string name="auth_password">Пароль</string>
+    <string name="auth_password_placeholder">••••••</string>
+    <string name="auth_password_min">Минимум 6 символов</string>
+    <string name="auth_login">Войти</string>
+    <string name="auth_login_in">Вход…</string>
+    <string name="auth_no_account">Нет аккаунта?</string>
+    <string name="auth_to_register">Регистрация</string>
+    <string name="auth_has_account">Уже есть аккаунт?</string>
+    <string name="auth_to_login">Войти</string>
+    <string name="auth_register">Зарегистрироваться</string>
+    <string name="auth_register_title">Регистрация</string>
+    <string name="auth_register_sub">Создайте аккаунт в Эко Нарын</string>
+    <string name="auth_registering">Регистрация…</string>
+    <string name="auth_name">Имя</string>
+    <string name="auth_name_placeholder">Ваше имя</string>
+    <string name="auth_address">Адрес (необязательно)</string>
+    <string name="auth_address_placeholder">ул. Ленина 12, кв 5</string>
+    <string name="auth_fill_phone_pass">Пожалуйста, введите телефон и пароль</string>
+    <string name="auth_login_failed">Не удалось войти</string>
+    <string name="auth_register_failed">Не удалось зарегистрироваться</string>
+    <string name="auth_confirm_logout">Вы уверены, что хотите выйти?</string>
+    <string name="auth_logout">Выйти</string>
+
+    <string name="role_admin">Администратор</string>
+    <string name="role_worker">Работник</string>
+    <string name="role_resident">Житель</string>
+    <string name="role_worker_job">Работник (Сборщик)</string>
+    <string name="badge_resident">🏠 Житель</string>
+    <string name="badge_worker">👷 Работник</string>
+    <string name="badge_admin">👑 Админ</string>
+
+    <string name="status_pending">Ожидает</string>
+    <string name="status_assigned">Назначен</string>
+    <string name="status_completed">Завершен</string>
+    <string name="status_cancelled">Отменен</string>
+    <string name="status_summary_pending">Ожидают</string>
+    <string name="status_summary_assigned">В работе</string>
+    <string name="status_summary_completed">Готово</string>
+    <string name="status_summary_total">Всего</string>
+    <string name="status_step_pending">Заявка создана</string>
+    <string name="status_step_assigned">Работник назначен</string>
+    <string name="status_step_completed">Сбор завершён</string>
+    <string name="status_step_rejected">Заявка отменена</string>
+
+    <string name="tab_home">Главная</string>
+    <string name="tab_request">Заявка</string>
+    <string name="tab_history">История</string>
+    <string name="tab_schedule">Расписание</string>
+    <string name="tab_profile">Профиль</string>
+    <string name="tab_request_title">Заявка на сбор</string>
+    <string name="tab_history_title">Мои заявки</string>
+
+    <string name="tab_today">Сегодня</string>
+    <string name="tab_collect">Сбор</string>
+    <string name="tab_my_collections">История</string>
+    <string name="tab_today_title">Маршрут</string>
+    <string name="tab_collect_title">Новый сбор</string>
+    <string name="tab_my_collections_title">Мои сборы</string>
+
+    <string name="home_welcome">Добро пожаловать,</string>
+    <string name="home_my_points">Мои баллы</string>
+    <string name="home_new_request">+ Новая заявка</string>
+    <string name="home_request_status">Статус заявок</string>
+    <string name="home_upcoming">Ближайший сбор</string>
+    <string name="home_loading_schedule">Загрузка расписания…</string>
+    <string name="home_latest_requests">Последние заявки</string>
+    <string name="home_see_all">Все →</string>
+    <string name="home_no_requests">У вас пока нет заявок</string>
+    <string name="home_create_request">Создать заявку</string>
+
+    <string name="request_material">Материал</string>
+    <string name="request_address">Адрес</string>
+    <string name="request_address_placeholder">ул. Ленина 12, кв 5</string>
+    <string name="request_qty">Примерный вес (кг)</string>
+    <string name="request_qty_placeholder">5</string>
+    <string name="request_notes">Заметки</string>
+    <string name="request_notes_placeholder">Позвоните перед приходом…</string>
+    <string name="request_submit">Отправить заявку</string>
+    <string name="request_submitting">Отправка…</string>
+    <string name="request_success_title">Заявка принята!</string>
+    <string name="request_success_sub">Наш работник свяжется с вами и приедет для сбора материалов.</string>
+    <string name="request_success_another">Создать ещё</string>
+    <string name="request_fill_required">Заполните все обязательные поля</string>
+    <string name="request_failed">Не удалось создать заявку</string>
+
+    <string name="history_empty">Нет заявок</string>
+    <string name="history_collected">Собрано</string>
+
+    <string name="schedule_loading">Расписание загружается…</string>
+    <string name="schedule_not_found">Не нашли свой район?</string>
+    <string name="schedule_not_found_desc">Позвоните нам: +996 700 000 001. Для объемов от 20 кг мы приедем в любой район!</string>
+
+    <string name="profile_my_points">Мои баллы</string>
+    <string name="profile_point_formula">1 кг = 1 балл</string>
+    <string name="profile_point_sub">За каждый сданный кг</string>
+    <string name="profile_personal_info">Личные данные</string>
+    <string name="profile_field_name">Имя</string>
+    <string name="profile_field_phone">Телефон</string>
+    <string name="profile_field_address">Адрес</string>
+    <string name="profile_field_role">Роль</string>
+    <string name="profile_edu_title">💡 Экообразование</string>
+    <string name="profile_edu_body">Знаете ли вы, что ПЭТ бутылка разлагается 400-450 лет? Не сжигайте — сдавайте нам!</string>
+    <string name="profile_language_title">🌐 Язык</string>
+    <string name="profile_logout_btn">Выйти из аккаунта</string>
+
+    <string name="today_welcome">Добро пожаловать,</string>
+    <string name="today_route">Маршрут на сегодня</string>
+    <string name="today_no_route">Маршрут на сегодня не назначен</string>
+    <string name="today_map">Карта →</string>
+    <string name="today_assigned">Назначенные заявки</string>
+    <string name="today_no_assigned">Нет назначенных заявок</string>
+
+    <string name="collect_choose_request">Выберите заявку</string>
+    <string name="collect_no_assigned">Нет назначенных заявок</string>
+    <string name="collect_material">Материал</string>
+    <string name="collect_actual_weight">Фактический вес (кг)</string>
+    <string name="collect_photo">Фото (необязательно)</string>
+    <string name="collect_camera">📷 Камера</string>
+    <string name="collect_gallery">🖼 Галерея</string>
+    <string name="collect_notes">Заметки</string>
+    <string name="collect_notes_placeholder">Качество, заметки…</string>
+    <string name="collect_submit">Записать сбор</string>
+    <string name="collect_saving">Сохранение…</string>
+    <string name="collect_success_title">Сбор записан!</string>
+    <string name="collect_success_sub">Заявка отмечена как завершённая. Баллы начислены жителю.</string>
+    <string name="collect_success_another">Записать ещё</string>
+    <string name="collect_camera_permission">Нужно разрешение на использование камеры</string>
+    <string name="collect_save_failed">Не удалось сохранить</string>
+
+    <string name="myc_total">Всего сборов</string>
+    <string name="myc_total_weight">Общий вес</string>
+    <string name="myc_resident">Житель</string>
+    <string name="myc_empty">Нет записей о сборах</string>
+
+    <string name="wp_total_collections">Всего сборов</string>
+    <string name="wp_total_weight">Общий вес (кг)</string>
+    <string name="wp_dispatcher_title">📞 Контакт диспетчера</string>
+    <string name="wp_dispatcher_body">По вопросам маршрутов и заявок звоните: +996 700 000 001 (Айбек)</string>
+
+    <string-array name="days_short">
+        <item>Пн</item>
+        <item>Вт</item>
+        <item>Ср</item>
+        <item>Чт</item>
+        <item>Пт</item>
+        <item>Сб</item>
+        <item>Вс</item>
+    </string-array>
+
+    <string-array name="days_full">
+        <item>Понедельник</item>
+        <item>Вторник</item>
+        <item>Среда</item>
+        <item>Четверг</item>
+        <item>Пятница</item>
+        <item>Суббота</item>
+        <item>Воскресенье</item>
+    </string-array>
+</resources>

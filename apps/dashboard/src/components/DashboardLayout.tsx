@@ -5,27 +5,13 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import Sidebar from './Sidebar';
 import { Bell } from 'lucide-react';
-
-const pageTitles: Record<string, string> = {
-  '/': 'Обзор',
-  '/collections': 'Сборы',
-  '/collections/new': 'Новый сбор',
-  '/requests': 'Заявки',
-  '/routes': 'Маршруты',
-  '/trips': 'Рейсы',
-  '/financial': 'Финансы',
-  '/analytics': 'Аналитика',
-  '/workers': 'Работники',
-  '/residents': 'Жители',
-  '/materials': 'Материалы',
-  '/schedule': 'Расписание',
-  '/settings': 'Настройки',
-};
+import { useT } from '@/lib/i18n';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const t = useT();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -43,7 +29,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   if (!user) return null;
 
-  const pageTitle = pageTitles[pathname] || '';
+  const pageTitle = t(`pageTitles.${pathname}`) || '';
 
   return (
     <div className="min-h-screen bg-background">

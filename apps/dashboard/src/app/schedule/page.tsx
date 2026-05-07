@@ -7,9 +7,7 @@ import { useApi } from '@/lib/hooks';
 import { useAuth } from '@/lib/auth';
 import { api } from '@/lib/api';
 import { Plus, Pencil } from 'lucide-react';
-
-const DAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
-const DAY_NAMES = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
+import { useT, useTArray } from '@/lib/i18n';
 
 interface Schedule {
   id: string;
@@ -20,6 +18,9 @@ interface Schedule {
 }
 
 export default function SchedulePage() {
+  const t = useT();
+  const daysShort = useTArray('schedule.daysShort');
+  const daysFull = useTArray('schedule.daysFull');
   const { token } = useAuth();
   const { data, loading, refetch } = useApi<Schedule[]>('/schedule');
 
@@ -49,7 +50,7 @@ export default function SchedulePage() {
       setForm({ area: '', dayOfWeek: '1', time: '09:00', active: true });
       refetch();
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed');
+      alert(err instanceof Error ? err.message : t('common.failed'));
     } finally {
       setSaving(false);
     }
@@ -65,11 +66,11 @@ export default function SchedulePage() {
   return (
     <DashboardLayout>
       <PageHeader
-        title="Расписание"
-        description="Расписание сбора по районам"
+        title={t('schedule.title')}
+        description={t('schedule.description')}
         action={
           <button onClick={() => { setShowForm(!showForm); setEditing(null); }} className="inline-flex items-center gap-2 bg-brand-700 text-white px-4 py-2 rounded-lg hover:bg-brand-900">
-            <Plus className="h-4 w-4" /> Добавить
+            <Plus className="h-4 w-4" /> {t('schedule.addButton')}
           </button>
         }
       />
@@ -78,29 +79,31 @@ export default function SchedulePage() {
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6 mb-6">
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium mb-1.5">Район</label>
-              <input value={form.area} onChange={(e) => setForm((f) => ({ ...f, area: e.target.value }))} placeholder="напр. Центр" className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg" required />
+              <label className="block text-sm font-medium mb-1.5">{t('schedule.area')}</label>
+              <input value={form.area} onChange={(e) => setForm((f) => ({ ...f, area: e.target.value }))} placeholder={t('schedule.areaPlaceholder')} className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg" required />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1.5">День недели</label>
+              <label className="block text-sm font-medium mb-1.5">{t('schedule.dayOfWeek')}</label>
               <select value={form.dayOfWeek} onChange={(e) => setForm((f) => ({ ...f, dayOfWeek: e.target.value }))} className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg">
-                {DAY_NAMES.map((d, i) => <option key={i} value={i}>{d}</option>)}
+                {daysFull.map((d, i) => <option key={i} value={i}>{d}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1.5">Время</label>
+              <label className="block text-sm font-medium mb-1.5">{t('schedule.time')}</label>
               <input type="time" value={form.time} onChange={(e) => setForm((f) => ({ ...f, time: e.target.value }))} className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg" required />
             </div>
             <div className="flex items-end">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" checked={form.active} onChange={(e) => setForm((f) => ({ ...f, active: e.target.checked }))} className="w-4 h-4 accent-brand-700" />
-                <span className="text-sm">Активно</span>
+                <span className="text-sm">{t('schedule.active')}</span>
               </label>
             </div>
           </div>
           <div className="flex gap-3">
-            <button type="submit" disabled={saving} className="bg-brand-700 text-white px-6 py-2 rounded-lg disabled:opacity-50">{saving ? 'Сохранение...' : editing ? 'Обновить' : 'Создать'}</button>
-            <button type="button" onClick={() => { setShowForm(false); setEditing(null); }} className="px-6 py-2 border border-neutral-200 rounded-lg">Отмена</button>
+            <button type="submit" disabled={saving} className="bg-brand-700 text-white px-6 py-2 rounded-lg disabled:opacity-50">
+              {saving ? t('common.saving') : editing ? t('common.update') : t('common.create')}
+            </button>
+            <button type="button" onClick={() => { setShowForm(false); setEditing(null); }} className="px-6 py-2 border border-neutral-200 rounded-lg">{t('common.cancel')}</button>
           </div>
         </form>
       )}
@@ -119,7 +122,7 @@ export default function SchedulePage() {
                     className="flex items-center gap-2 bg-brand-50 px-4 py-2 rounded-lg cursor-pointer hover:bg-green-100"
                     onClick={() => startEdit(s)}
                   >
-                    <span className="font-medium text-brand-700">{DAYS[s.dayOfWeek]}</span>
+                    <span className="font-medium text-brand-700">{daysShort[s.dayOfWeek]}</span>
                     <span className="text-neutral-900">{s.time}</span>
                     <Pencil className="h-3 w-3 text-neutral-500" />
                   </div>
@@ -128,7 +131,7 @@ export default function SchedulePage() {
             </div>
           ))}
           {Object.keys(grouped).length === 0 && (
-            <div className="bg-white rounded-2xl p-8 text-center text-neutral-500">Нет расписания</div>
+            <div className="bg-white rounded-2xl p-8 text-center text-neutral-500">{t('schedule.empty')}</div>
           )}
         </div>
       )}

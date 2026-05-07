@@ -3,15 +3,29 @@
 import { useState, useEffect } from 'react';
 import { API_URL } from '@/lib/utils';
 import { CheckCircle, AlertCircle } from 'lucide-react';
+import { useT, useLocalized, useLang } from '@/lib/i18n';
 
 interface Material {
   id: string;
+  name: string;
   nameRu: string;
   buyingPrice: number;
   unit: string;
 }
 
+function MaterialOption({ m }: { m: Material }) {
+  const t = useT();
+  const displayName = useLocalized(m, { ru: 'nameRu', en: 'name' });
+  return (
+    <option value={m.id}>
+      {displayName} ({m.buyingPrice} {t('materials.currency')}/{m.unit})
+    </option>
+  );
+}
+
 export default function RequestPage() {
+  const t = useT();
+  useLang(); // ensure rerender on lang change for option labels
   const [materials, setMaterials] = useState<Material[]>([]);
   const [form, setForm] = useState({
     name: '',
@@ -38,7 +52,6 @@ export default function RequestPage() {
     setErrorMsg('');
 
     try {
-      // Register or login
       let token = '';
       const regRes = await fetch(`${API_URL}/auth/register`, {
         method: 'POST',
@@ -50,20 +63,18 @@ export default function RequestPage() {
         const regData = await regRes.json();
         token = regData.data.accessToken;
       } else {
-        // Try login
         const loginRes = await fetch(`${API_URL}/auth/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ phone: form.phone, password: form.password }),
         });
         if (!loginRes.ok) {
-          throw new Error('Не удалось войти. Проверьте номер телефона и пароль.');
+          throw new Error(t('request.errorLogin'));
         }
         const loginData = await loginRes.json();
         token = loginData.data.accessToken;
       }
 
-      // Create pickup request
       const reqRes = await fetch(`${API_URL}/requests`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
@@ -77,13 +88,13 @@ export default function RequestPage() {
 
       if (!reqRes.ok) {
         const errData = await reqRes.json();
-        throw new Error(errData.error || 'Не удалось создать заявку');
+        throw new Error(errData.error || t('request.errorCreate'));
       }
 
       setStatus('success');
     } catch (err) {
       setStatus('error');
-      setErrorMsg(err instanceof Error ? err.message : 'Произошла ошибка');
+      setErrorMsg(err instanceof Error ? err.message : t('request.errorGeneric'));
     }
   };
 
@@ -96,11 +107,8 @@ export default function RequestPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-green-50 rounded-2xl mb-6">
             <CheckCircle className="h-8 w-8 text-green-600" />
           </div>
-          <h1 className="text-2xl font-bold text-neutral-900">Заявка принята!</h1>
-          <p className="mt-4 text-neutral-500 leading-relaxed">
-            Спасибо за вашу заявку! Наш работник свяжется с вами и приедет для сбора материалов.
-            Обычно это занимает 1-3 дня.
-          </p>
+          <h1 className="text-2xl font-bold text-neutral-900">{t('request.successTitle')}</h1>
+          <p className="mt-4 text-neutral-500 leading-relaxed">{t('request.successSub')}</p>
           <button
             onClick={() => {
               setStatus('idle');
@@ -108,7 +116,7 @@ export default function RequestPage() {
             }}
             className="mt-6 bg-brand-700 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-brand-900 transition-colors"
           >
-            Создать ещё одну заявку
+            {t('request.successAnother')}
           </button>
         </div>
       </main>
@@ -122,10 +130,10 @@ export default function RequestPage() {
         <div className="absolute top-0 right-0 w-72 h-72 bg-brand-300/15 rounded-full blur-3xl" />
         <div className="relative max-w-4xl mx-auto px-4 text-center">
           <span className="inline-flex items-center gap-1.5 bg-brand-100 text-brand-700 text-sm font-medium px-3 py-1 rounded-full border border-brand-200 mb-5">
-            Быстро и бесплатно
+            {t('request.badge')}
           </span>
-          <h1 className="text-4xl lg:text-5xl font-extrabold text-neutral-900 tracking-tight">Заявка на сбор</h1>
-          <p className="mt-4 text-lg text-neutral-500">Заполните форму — мы приедем и заберем материалы</p>
+          <h1 className="text-4xl lg:text-5xl font-extrabold text-neutral-900 tracking-tight">{t('request.title')}</h1>
+          <p className="mt-4 text-lg text-neutral-500">{t('request.sub')}</p>
         </div>
       </section>
 
@@ -141,35 +149,35 @@ export default function RequestPage() {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1.5">Ваше имя</label>
+                <label className="block text-sm font-medium text-neutral-700 mb-1.5">{t('request.name')}</label>
                 <input
                   value={form.name}
                   onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                  placeholder="Асан Токторов"
+                  placeholder={t('request.namePlaceholder')}
                   className={inputClass}
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1.5">Телефон</label>
+                <label className="block text-sm font-medium text-neutral-700 mb-1.5">{t('request.phone')}</label>
                 <input
                   type="tel"
                   value={form.phone}
                   onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-                  placeholder="+996700123456"
+                  placeholder={t('request.phonePlaceholder')}
                   className={inputClass}
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1.5">Пароль (для отслеживания заявки)</label>
+                <label className="block text-sm font-medium text-neutral-700 mb-1.5">{t('request.password')}</label>
                 <input
                   type="password"
                   value={form.password}
                   onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
-                  placeholder="Минимум 6 символов"
+                  placeholder={t('request.passwordPlaceholder')}
                   minLength={6}
                   className={inputClass}
                   required
@@ -177,53 +185,51 @@ export default function RequestPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1.5">Материал</label>
+                <label className="block text-sm font-medium text-neutral-700 mb-1.5">{t('request.material')}</label>
                 <select
                   value={form.materialId}
                   onChange={(e) => setForm((f) => ({ ...f, materialId: e.target.value }))}
                   className={inputClass}
                   required
                 >
-                  <option value="">Выберите материал</option>
+                  <option value="">{t('request.materialChoose')}</option>
                   {materials.map((m) => (
-                    <option key={m.id} value={m.id}>
-                      {m.nameRu} ({m.buyingPrice} сом/{m.unit})
-                    </option>
+                    <MaterialOption key={m.id} m={m} />
                   ))}
                 </select>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1.5">Адрес</label>
+                <label className="block text-sm font-medium text-neutral-700 mb-1.5">{t('request.address')}</label>
                 <input
                   value={form.address}
                   onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))}
-                  placeholder="ул. Ленина 12, кв 5"
+                  placeholder={t('request.addressPlaceholder')}
                   className={inputClass}
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1.5">Примерный вес (кг)</label>
+                <label className="block text-sm font-medium text-neutral-700 mb-1.5">{t('request.qty')}</label>
                 <input
                   type="number"
                   step="0.5"
                   min="0.5"
                   value={form.estimatedQty}
                   onChange={(e) => setForm((f) => ({ ...f, estimatedQty: e.target.value }))}
-                  placeholder="5"
+                  placeholder={t('request.qtyPlaceholder')}
                   className={inputClass}
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1.5">Заметки (необязательно)</label>
+                <label className="block text-sm font-medium text-neutral-700 mb-1.5">{t('request.notes')}</label>
                 <textarea
                   value={form.notes}
                   onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
-                  placeholder="Позвоните перед приходом..."
+                  placeholder={t('request.notesPlaceholder')}
                   rows={3}
                   className={inputClass}
                 />
@@ -235,7 +241,7 @@ export default function RequestPage() {
               disabled={status === 'loading'}
               className="w-full mt-6 bg-brand-700 text-white py-3 rounded-xl font-semibold hover:bg-brand-900 hover:-translate-y-[1px] transition-all duration-200 disabled:opacity-50 disabled:hover:translate-y-0"
             >
-              {status === 'loading' ? 'Отправка...' : 'Отправить заявку'}
+              {status === 'loading' ? t('request.submitting') : t('request.submit')}
             </button>
           </form>
         </div>

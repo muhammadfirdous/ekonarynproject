@@ -7,9 +7,11 @@ import PageHeader from '@/components/ui/PageHeader';
 import { useApi } from '@/lib/hooks';
 import { useAuth } from '@/lib/auth';
 import { api } from '@/lib/api';
+import { useT, useLang } from '@/lib/i18n';
 
 interface Material {
   id: string;
+  name: string;
   nameRu: string;
 }
 
@@ -18,10 +20,12 @@ interface Request {
   address: string;
   estimatedQty: number;
   resident: { name: string };
-  material: { nameRu: string };
+  material: { name: string; nameRu: string };
 }
 
 export default function NewCollectionPage() {
+  const t = useT();
+  const { lang } = useLang();
   const router = useRouter();
   const { token } = useAuth();
   const { data: requests } = useApi<Request[]>('/requests?status=ASSIGNED&limit=50');
@@ -30,6 +34,8 @@ export default function NewCollectionPage() {
   const [form, setForm] = useState({ requestId: '', materialId: '', actualWeightKg: '', notes: '' });
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
+
+  const matName = (m: { name: string; nameRu: string }) => (lang === 'ru' ? m.nameRu : m.name);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,7 +50,7 @@ export default function NewCollectionPage() {
       }, token!);
       router.push('/collections');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save');
+      setError(err instanceof Error ? err.message : t('common.failed'));
     } finally {
       setSaving(false);
     }
@@ -54,7 +60,7 @@ export default function NewCollectionPage() {
 
   return (
     <DashboardLayout>
-      <PageHeader title="Новый сбор" description="Записать новый сбор материалов" />
+      <PageHeader title={t('newCollection.title')} description={t('newCollection.description')} />
 
       <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6 max-w-xl">
         {error && (
@@ -62,7 +68,7 @@ export default function NewCollectionPage() {
         )}
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-neutral-900 mb-1.5">Заявка</label>
+          <label className="block text-sm font-medium text-neutral-900 mb-1.5">{t('newCollection.request')}</label>
           <select
             value={form.requestId}
             onChange={(e) => {
@@ -72,46 +78,46 @@ export default function NewCollectionPage() {
             className="w-full px-4 py-2.5 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20"
             required
           >
-            <option value="">Выберите заявку</option>
+            <option value="">{t('newCollection.chooseRequest')}</option>
             {requests?.map((r) => (
               <option key={r.id} value={r.id}>
-                {r.resident?.name} — {r.material?.nameRu} ({r.estimatedQty} кг) — {r.address}
+                {r.resident?.name} — {matName(r.material)} ({r.estimatedQty} {t('common.kg')}) — {r.address}
               </option>
             ))}
           </select>
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-neutral-900 mb-1.5">Материал</label>
+          <label className="block text-sm font-medium text-neutral-900 mb-1.5">{t('newCollection.material')}</label>
           <select
             value={form.materialId}
             onChange={(e) => setForm((f) => ({ ...f, materialId: e.target.value }))}
             className="w-full px-4 py-2.5 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20"
             required
           >
-            <option value="">Выберите материал</option>
+            <option value="">{t('newCollection.chooseMaterial')}</option>
             {materials?.map((m) => (
-              <option key={m.id} value={m.id}>{m.nameRu}</option>
+              <option key={m.id} value={m.id}>{matName(m)}</option>
             ))}
           </select>
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-neutral-900 mb-1.5">Фактический вес (кг)</label>
+          <label className="block text-sm font-medium text-neutral-900 mb-1.5">{t('newCollection.actualWeight')}</label>
           <input
             type="number"
             step="0.1"
             min="0.1"
             value={form.actualWeightKg}
             onChange={(e) => setForm((f) => ({ ...f, actualWeightKg: e.target.value }))}
-            placeholder={selectedRequest ? `Оценка: ${selectedRequest.estimatedQty} кг` : '0.0'}
+            placeholder={selectedRequest ? t('newCollection.estimateLabel', { qty: selectedRequest.estimatedQty }) : t('newCollection.actualWeightPlaceholder')}
             className="w-full px-4 py-2.5 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20"
             required
           />
         </div>
 
         <div className="mb-6">
-          <label className="block text-sm font-medium text-neutral-900 mb-1.5">Заметки</label>
+          <label className="block text-sm font-medium text-neutral-900 mb-1.5">{t('newCollection.notes')}</label>
           <textarea
             value={form.notes}
             onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
@@ -126,14 +132,14 @@ export default function NewCollectionPage() {
             disabled={saving}
             className="bg-brand-700 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-brand-900 disabled:opacity-50"
           >
-            {saving ? 'Сохранение...' : 'Сохранить'}
+            {saving ? t('common.saving') : t('common.save')}
           </button>
           <button
             type="button"
             onClick={() => router.back()}
             className="px-6 py-2.5 border border-neutral-200 rounded-lg hover:bg-neutral-50"
           >
-            Отмена
+            {t('common.cancel')}
           </button>
         </div>
       </form>

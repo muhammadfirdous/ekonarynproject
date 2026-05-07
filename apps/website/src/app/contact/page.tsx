@@ -2,18 +2,26 @@
 
 import { useState } from 'react';
 import { Phone, Mail, MapPin, Clock, Send, CheckCircle } from 'lucide-react';
+import { useT } from '@/lib/i18n';
 
 export default function ContactPage() {
+  const t = useT();
   const [form, setForm] = useState({ name: '', phone: '', message: '' });
   const [sent, setSent] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // In production, this would send to an API endpoint or email service
     setSent(true);
   };
 
   const inputClass = 'w-full px-4 py-2.5 bg-white border border-neutral-200 rounded-xl text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors';
+
+  const items = [
+    { icon: Phone, title: t('contact.phoneTitle'), lines: ['+996 700 000 001', t('contact.phoneAlt')] },
+    { icon: Mail, title: t('contact.emailTitle'), lines: ['info@ekonaryn.kg'] },
+    { icon: MapPin, title: t('contact.addressTitle'), lines: [t('contact.addressLine1'), t('contact.addressLine2')] },
+    { icon: Clock, title: t('contact.hoursTitle'), lines: [t('contact.hoursWeekdays'), t('contact.hoursSat'), t('contact.hoursSun')] },
+  ];
 
   return (
     <main>
@@ -22,10 +30,10 @@ export default function ContactPage() {
         <div className="absolute top-0 right-0 w-72 h-72 bg-brand-300/15 rounded-full blur-3xl" />
         <div className="relative max-w-4xl mx-auto px-4 text-center">
           <span className="inline-flex items-center gap-1.5 bg-brand-100 text-brand-700 text-sm font-medium px-3 py-1 rounded-full border border-brand-200 mb-5">
-            Свяжитесь с нами
+            {t('contact.badge')}
           </span>
-          <h1 className="text-4xl lg:text-5xl font-extrabold text-neutral-900 tracking-tight">Контакты</h1>
-          <p className="mt-4 text-lg text-neutral-500">Свяжитесь с нами любым удобным способом</p>
+          <h1 className="text-4xl lg:text-5xl font-extrabold text-neutral-900 tracking-tight">{t('contact.title')}</h1>
+          <p className="mt-4 text-lg text-neutral-500">{t('contact.sub')}</p>
         </div>
       </section>
 
@@ -34,15 +42,10 @@ export default function ContactPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Contact info */}
             <div>
-              <h2 className="text-xl font-bold text-neutral-900 mb-6">Как с нами связаться</h2>
+              <h2 className="text-xl font-bold text-neutral-900 mb-6">{t('contact.howTitle')}</h2>
 
               <div className="space-y-5">
-                {[
-                  { icon: Phone, title: 'Телефон', lines: ['+996 700 000 001', 'Также доступен WhatsApp'] },
-                  { icon: Mail, title: 'Email', lines: ['info@ekonaryn.kg'] },
-                  { icon: MapPin, title: 'Адрес', lines: ['г. Нарын, ул. Ленина 45', 'Нарынская область, Кыргызская Республика'] },
-                  { icon: Clock, title: 'Часы работы', lines: ['Пн-Пт: 09:00 - 18:00', 'Сб: 09:00 - 14:00', 'Вс: выходной'] },
-                ].map((item, i) => {
+                {items.map((item, i) => {
                   const Icon = item.icon;
                   return (
                     <div key={i} className="flex items-start gap-4">
@@ -65,7 +68,7 @@ export default function ContactPage() {
                 <div className="h-56 flex items-center justify-center">
                   <div className="text-center">
                     <MapPin className="h-10 w-10 text-brand-700 mx-auto mb-2" />
-                    <p className="font-medium text-neutral-900 text-sm">г. Нарын, ул. Ленина 45</p>
+                    <p className="font-medium text-neutral-900 text-sm">{t('contact.mapAddress')}</p>
                     <p className="text-xs text-neutral-500 mt-1">41.4287° N, 75.9911° E</p>
                     <a
                       href="https://maps.google.com/?q=41.4287,75.9911"
@@ -73,7 +76,7 @@ export default function ContactPage() {
                       rel="noopener noreferrer"
                       className="inline-flex mt-3 text-sm text-brand-700 hover:text-brand-900 font-medium transition-colors"
                     >
-                      Открыть в Google Maps
+                      {t('contact.openMaps')}
                     </a>
                   </div>
                 </div>
@@ -82,54 +85,54 @@ export default function ContactPage() {
 
             {/* Contact form */}
             <div>
-              <h2 className="text-xl font-bold text-neutral-900 mb-6">Напишите нам</h2>
+              <h2 className="text-xl font-bold text-neutral-900 mb-6">{t('contact.formTitle')}</h2>
 
               {sent ? (
                 <div className="bg-white rounded-2xl border border-neutral-100 shadow-card p-8 text-center">
                   <div className="inline-flex items-center justify-center w-14 h-14 bg-green-50 rounded-2xl mb-4">
                     <CheckCircle className="h-7 w-7 text-green-600" />
                   </div>
-                  <h3 className="text-lg font-semibold text-neutral-900">Сообщение отправлено!</h3>
-                  <p className="text-neutral-500 mt-2 text-sm">Мы свяжемся с вами в ближайшее время.</p>
+                  <h3 className="text-lg font-semibold text-neutral-900">{t('contact.sentTitle')}</h3>
+                  <p className="text-neutral-500 mt-2 text-sm">{t('contact.sentSub')}</p>
                   <button
                     onClick={() => { setSent(false); setForm({ name: '', phone: '', message: '' }); }}
                     className="mt-4 text-brand-700 hover:text-brand-900 text-sm font-medium transition-colors"
                   >
-                    Отправить ещё
+                    {t('contact.sendAnother')}
                   </button>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-neutral-100 shadow-card p-8">
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-neutral-700 mb-1.5">Имя</label>
+                      <label className="block text-sm font-medium text-neutral-700 mb-1.5">{t('contact.name')}</label>
                       <input
                         value={form.name}
                         onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                        placeholder="Ваше имя"
+                        placeholder={t('contact.namePlaceholder')}
                         className={inputClass}
                         required
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-neutral-700 mb-1.5">Телефон</label>
+                      <label className="block text-sm font-medium text-neutral-700 mb-1.5">{t('contact.phone')}</label>
                       <input
                         type="tel"
                         value={form.phone}
                         onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-                        placeholder="+996 700 123 456"
+                        placeholder={t('contact.phonePlaceholder')}
                         className={inputClass}
                         required
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-neutral-700 mb-1.5">Сообщение</label>
+                      <label className="block text-sm font-medium text-neutral-700 mb-1.5">{t('contact.message')}</label>
                       <textarea
                         value={form.message}
                         onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
-                        placeholder="Ваше сообщение..."
+                        placeholder={t('contact.messagePlaceholder')}
                         rows={5}
                         className={inputClass}
                         required
@@ -142,7 +145,7 @@ export default function ContactPage() {
                     className="w-full mt-6 inline-flex items-center justify-center gap-2 bg-brand-700 text-white py-3 rounded-xl font-semibold hover:bg-brand-900 hover:-translate-y-[1px] transition-all duration-200"
                   >
                     <Send className="h-4 w-4" />
-                    Отправить
+                    {t('contact.submit')}
                   </button>
                 </form>
               )}
