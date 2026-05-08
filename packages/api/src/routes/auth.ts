@@ -14,6 +14,7 @@ import {
 } from '@ekonaryn/shared';
 import { validate } from '../middleware/validate';
 import { authenticate } from '../middleware/auth';
+import { authLimiter } from '../middleware/rateLimit';
 import { generateTokens, verifyRefreshToken } from '../utils/tokens';
 import { upload } from '../utils/upload';
 import {
@@ -293,6 +294,7 @@ router.post(
 
 router.post(
   '/verify/resend',
+  authLimiter,
   validate(resendCodeSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -330,6 +332,7 @@ router.post(
 
 router.post(
   '/login',
+  authLimiter,
   validate(loginSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -403,7 +406,7 @@ router.post(
 // Refresh & me
 // ============================================================================
 
-router.post('/refresh', async (req: Request, res: Response, next: NextFunction) => {
+router.post('/refresh', authLimiter, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { refreshToken } = req.body;
     if (!refreshToken) throw new AppError('Refresh token required', 400);
