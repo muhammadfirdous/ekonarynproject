@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  createContext,
-  useContext,
-  useMemo,
-  useState,
-  type ReactNode,
-} from 'react';
+import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
 import ru from './messages/ru';
 import en from './messages/en';
 import { setUtilLang } from './utils';
@@ -35,9 +29,7 @@ function resolve(dict: unknown, path: string): unknown {
 
 function interpolate(str: string, vars?: Record<string, string | number>): string {
   if (!vars) return str;
-  return str.replace(/\{(\w+)\}/g, (_, key) =>
-    key in vars ? String(vars[key]) : `{${key}}`,
-  );
+  return str.replace(/\{(\w+)\}/g, (_, key) => (key in vars ? String(vars[key]) : `{${key}}`));
 }
 
 function writeCookie(value: Lang) {
@@ -97,13 +89,16 @@ export function useTArray(key: string): string[] {
   return Array.isArray(found) ? (found as string[]) : [];
 }
 
-export function useLocalized<T extends Record<string, unknown>>(
+export function useLocalized<T>(
   item: T | null | undefined,
   fields: { ru: keyof T; en: keyof T },
 ): string {
   const { lang } = useLang();
   if (!item) return '';
-  const v = item[fields[lang]];
+  // Cast widens T (which may be a TS interface like Material with no index
+  // signature) to a string-indexable shape so we can read by keyof T at
+  // runtime without TS demanding an index signature on every callsite.
+  const v = (item as Record<keyof T, unknown>)[fields[lang]];
   return typeof v === 'string' ? v : '';
 }
 
