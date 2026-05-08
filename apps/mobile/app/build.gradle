@@ -2,6 +2,15 @@ plugins {
     id 'com.android.application'
 }
 
+// API_BASE_URL is read from gradle properties so the release APK doesn't
+// hardcode the emulator loopback. Override per-build via either:
+//   - ~/.gradle/gradle.properties (for local release builds)
+//   - -PAPI_BASE_URL_RELEASE=https://api.example.com/api/v1 on the command line
+//   - the CI environment, before invoking ./gradlew assembleRelease
+// See apps/mobile/TESTS.md > "Build configuration" for the full matrix.
+def apiBaseUrlDebug   = project.findProperty('API_BASE_URL_DEBUG')   ?: 'http://10.0.2.2:4000/api/v1'
+def apiBaseUrlRelease = project.findProperty('API_BASE_URL_RELEASE') ?: 'https://api.ekonaryn.kg/api/v1'
+
 android {
     namespace 'kg.ekonaryn.app'
     compileSdk 34
@@ -12,6 +21,7 @@ android {
         targetSdk 34
         versionCode 1
         versionName "1.0.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildFeatures {
@@ -22,18 +32,24 @@ android {
     buildTypes {
         debug {
             // Android emulator -> host machine
-            buildConfigField "String", "API_BASE_URL", "\"http://10.0.2.2:4000/api/v1\""
+            buildConfigField "String", "API_BASE_URL", "\"${apiBaseUrlDebug}\""
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "API_BASE_URL", "\"http://10.0.2.2:4000/api/v1\""
+            buildConfigField "String", "API_BASE_URL", "\"${apiBaseUrlRelease}\""
         }
     }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
     }
 }
 
@@ -50,4 +66,21 @@ dependencies {
     implementation 'com.google.android.material:material:1.11.0'
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
     implementation 'com.google.code.gson:gson:2.10.1'
+
+    // ---------- Unit tests (JVM, src/test) ----------
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.mockito:mockito-core:5.12.0'
+    testImplementation 'org.mockito:mockito-inline:5.2.0'
+    testImplementation 'org.robolectric:robolectric:4.15.1'
+    testImplementation 'androidx.test.ext:junit:1.1.5'
+    testImplementation 'androidx.test:core:1.5.0'
+    testImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
+
+    // ---------- Instrumented tests (device/emulator, src/androidTest) ----------
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test:runner:1.5.2'
+    androidTestImplementation 'androidx.test:rules:1.5.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.5.1'
+    androidTestImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
 }
