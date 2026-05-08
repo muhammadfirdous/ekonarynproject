@@ -41,8 +41,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <h2 className="text-[15px] font-semibold text-neutral-900">{pageTitle}</h2>
           </div>
           <div className="flex items-center gap-3">
-            <button className="w-9 h-9 rounded-lg hover:bg-neutral-100 flex items-center justify-center transition-colors relative">
-              <Bell className="h-4 w-4 text-neutral-500" />
+            <button
+              type="button"
+              aria-label={t('a11y.notifications')}
+              className="w-9 h-9 rounded-lg hover:bg-neutral-100 flex items-center justify-center transition-colors relative"
+            >
+              <Bell className="h-4 w-4 text-neutral-500" aria-hidden="true" />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-brand-500 rounded-full" />
             </button>
             <div className="w-8 h-8 bg-brand-100 rounded-lg flex items-center justify-center">

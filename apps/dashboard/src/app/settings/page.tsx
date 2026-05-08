@@ -39,7 +39,7 @@ function SettingsForm({ user, token }: { user: SettingsUser; token: string | nul
       onSubmit={handleSubmit}
       className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6"
     >
-      <h3 className="font-semibold text-neutral-900 mb-4">{t('settings.profileTitle')}</h3>
+      <h2 className="font-semibold text-neutral-900 mb-4">{t('settings.profileTitle')}</h2>
 
       {message && (
         <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded text-green-700 text-sm">
@@ -48,16 +48,22 @@ function SettingsForm({ user, token }: { user: SettingsUser; token: string | nul
       )}
 
       <div className="mb-4">
-        <label className="block text-sm font-medium mb-1.5">{t('settings.name')}</label>
+        <label htmlFor="settings-name" className="block text-sm font-medium mb-1.5">
+          {t('settings.name')}
+        </label>
         <input
+          id="settings-name"
           value={form.name}
           onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
           className="w-full px-4 py-2.5 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20"
         />
       </div>
       <div className="mb-6">
-        <label className="block text-sm font-medium mb-1.5">{t('settings.phone')}</label>
+        <label htmlFor="settings-phone" className="block text-sm font-medium mb-1.5">
+          {t('settings.phone')}
+        </label>
         <input
+          id="settings-phone"
           value={form.phone}
           onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
           className="w-full px-4 py-2.5 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20"
@@ -88,7 +94,7 @@ export default function SettingsPage() {
         {user && <SettingsForm user={user} token={token} />}
 
         <div className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6 mt-6">
-          <h3 className="font-semibold text-neutral-900 mb-4">{t('settings.systemTitle')}</h3>
+          <h2 className="font-semibold text-neutral-900 mb-4">{t('settings.systemTitle')}</h2>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-neutral-500">{t('settings.version')}</span>

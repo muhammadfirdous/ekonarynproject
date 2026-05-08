@@ -29,7 +29,8 @@ export default function LoginPage() {
     }
   };
 
-  const inputClass = 'w-full px-4 py-2.5 bg-white border border-neutral-200 rounded-xl text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors';
+  const inputClass =
+    'w-full px-4 py-2.5 bg-white border border-neutral-200 rounded-xl text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors';
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -46,7 +47,10 @@ export default function LoginPage() {
           <p className="text-neutral-500 mt-1 text-sm">{t('brandSub')}</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-card border border-neutral-100 p-8">
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white rounded-2xl shadow-card border border-neutral-100 p-8"
+        >
           <h2 className="text-lg font-semibold text-neutral-900 mb-6">{t('auth.title')}</h2>
 
           {error && (
@@ -57,8 +61,14 @@ export default function LoginPage() {
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1.5">{t('auth.phone')}</label>
+              <label
+                htmlFor="login-phone"
+                className="block text-sm font-medium text-neutral-700 mb-1.5"
+              >
+                {t('auth.phone')}
+              </label>
               <input
+                id="login-phone"
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
@@ -69,8 +79,14 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1.5">{t('auth.password')}</label>
+              <label
+                htmlFor="login-password"
+                className="block text-sm font-medium text-neutral-700 mb-1.5"
+              >
+                {t('auth.password')}
+              </label>
               <input
+                id="login-password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

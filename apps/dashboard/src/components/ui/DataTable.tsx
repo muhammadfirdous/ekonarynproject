@@ -68,7 +68,9 @@ export default function DataTable<T>({ columns, data, searchPlaceholder }: DataT
                     >
                       <div className="flex items-center gap-1">
                         {flexRender(header.column.columnDef.header, header.getContext())}
-                        {header.column.getCanSort() && <ChevronsUpDown className="h-3 w-3 text-neutral-400" />}
+                        {header.column.getCanSort() && (
+                          <ChevronsUpDown className="h-3 w-3 text-neutral-400" />
+                        )}
                       </div>
                     </th>
                   ))}
@@ -78,13 +80,19 @@ export default function DataTable<T>({ columns, data, searchPlaceholder }: DataT
             <tbody>
               {table.getRowModel().rows.length === 0 ? (
                 <tr>
-                  <td colSpan={columns.length} className="px-5 py-12 text-center text-neutral-500 text-sm">
+                  <td
+                    colSpan={columns.length}
+                    className="px-5 py-12 text-center text-neutral-500 text-sm"
+                  >
                     {t('common.noData')}
                   </td>
                 </tr>
               ) : (
                 table.getRowModel().rows.map((row) => (
-                  <tr key={row.id} className="border-b border-neutral-50 hover:bg-neutral-50/50 transition-colors">
+                  <tr
+                    key={row.id}
+                    className="border-b border-neutral-50 hover:bg-neutral-50/50 transition-colors"
+                  >
                     {row.getVisibleCells().map((cell) => (
                       <td key={cell.id} className="px-5 py-3.5 text-sm text-neutral-700">
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -99,22 +107,27 @@ export default function DataTable<T>({ columns, data, searchPlaceholder }: DataT
 
         <div className="flex items-center justify-between px-5 py-3 border-t border-neutral-100">
           <span className="text-sm text-neutral-500">
-            {t('common.page')} {table.getState().pagination.pageIndex + 1} {t('common.of')} {table.getPageCount()}
+            {t('common.page')} {table.getState().pagination.pageIndex + 1} {t('common.of')}{' '}
+            {table.getPageCount()}
           </span>
           <div className="flex gap-1">
             <button
+              type="button"
+              aria-label={t('common.previousPage')}
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
               className="p-1.5 rounded-lg hover:bg-neutral-100 disabled:opacity-30 transition-colors"
             >
-              <ChevronLeft className="h-4 w-4 text-neutral-600" />
+              <ChevronLeft className="h-4 w-4 text-neutral-600" aria-hidden="true" />
             </button>
             <button
+              type="button"
+              aria-label={t('common.nextPage')}
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
               className="p-1.5 rounded-lg hover:bg-neutral-100 disabled:opacity-30 transition-colors"
             >
-              <ChevronRight className="h-4 w-4 text-neutral-600" />
+              <ChevronRight className="h-4 w-4 text-neutral-600" aria-hidden="true" />
             </button>
           </div>
         </div>
