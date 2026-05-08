@@ -1,0 +1,66 @@
+name: Security
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Weekly Monday 06:00 UTC sweep so deps audit catches advisories that
+    # land between PRs.
+    - cron: '0 6 * * 1'
+
+concurrency:
+  group: security-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  npm-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+
+      # We only fail on production-dep advisories (high or critical). Dev-dep
+      # advisories (eslint plugins, vitest internals, etc.) are noisy and
+      # rarely actionable on a Friday.
+      - name: npm audit (production deps, high+critical only)
+        run: npm audit --omit=dev --audit-level=high
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # gitleaks needs full history to scan past commits.
+          fetch-depth: 0
+
+      # gitleaks is a single static binary, fast and deterministic. The official
+      # action pulls the latest tagged release.
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  api-security-suite:
+    runs-on: ubuntu-latest
+    env:
+      JWT_SECRET: ci-test-secret
+      DATABASE_URL: file:./test.db
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run db:generate
+
+      # Run only the security-focused subset (Phase 8). This is what guards
+      # against auth bypass / IDOR / mass-assignment / injection regressions.
+      - name: API security/contract/migration tests
+        run: npm test --workspace=@ekonaryn/api -- tests/security
