@@ -10,6 +10,7 @@ export interface JwtPayload {
 }
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace -- Express types are exposed via a global namespace; module augmentation is the only way to add `req.user`.
   namespace Express {
     interface Request {
       user?: JwtPayload;
