@@ -27,6 +27,8 @@
     <string name="auth_phone">Phone</string>
     <string name="auth_phone_placeholder">+996700000001</string>
     <string name="auth_phone_placeholder2">+996700123456</string>
+    <string name="auth_email">Email (optional)</string>
+    <string name="auth_email_placeholder">you@example.com</string>
     <string name="auth_password">Password</string>
     <string name="auth_password_placeholder">••••••</string>
     <string name="auth_password_min">At least 6 characters</string>
@@ -44,6 +46,25 @@
     <string name="auth_name_placeholder">Your name</string>
     <string name="auth_address">Address (optional)</string>
     <string name="auth_address_placeholder">12 Lenin St., apt 5</string>
+    <string name="auth_role">I am a…</string>
+    <string name="auth_id_number">ID / passport number</string>
+    <string name="auth_id_number_hint">e.g. AN1234567</string>
+    <string name="auth_service_areas">Service areas (comma-separated)</string>
+    <string name="auth_service_areas_hint">e.g. Center, Mikrorayon</string>
+    <string name="auth_vehicle_type">Vehicle type</string>
+    <string name="auth_vehicle_type_hint">e.g. pickup truck</string>
+    <string name="auth_vehicle_plate">Vehicle plate</string>
+    <string name="auth_vehicle_plate_hint">01KG123ABC</string>
+    <string name="auth_vehicle_capacity">Vehicle capacity (kg)</string>
+    <string name="auth_vehicle_capacity_hint">e.g. 800</string>
+    <string name="auth_id_document">ID document photo</string>
+    <string name="auth_id_document_pick">Choose image</string>
+    <string name="auth_id_document_none">No file selected</string>
+    <string name="auth_id_document_required">Please attach a photo of your ID document</string>
+    <string name="auth_invalid_capacity">Vehicle capacity must be a number</string>
+    <string name="auth_worker_fill_required">Please fill in all worker fields</string>
+    <string name="auth_worker_pending_title">Application submitted</string>
+    <string name="auth_worker_pending">Your application is under review. You will be notified once an admin approves it.</string>
     <string name="auth_fill_phone_pass">Please enter your phone and password</string>
     <string name="auth_login_failed">Could not sign in</string>
     <string name="auth_register_failed">Could not register</string>
@@ -81,6 +102,68 @@
     <string name="tab_profile">Profile</string>
     <string name="tab_request_title">Pickup Request</string>
     <string name="tab_history_title">My Requests</string>
+
+    <!-- Admin tabs -->
+    <string name="tab_overview">Overview</string>
+    <string name="tab_requests">Requests</string>
+    <string name="tab_workers">Workers</string>
+    <string name="tab_overview_title">Dashboard</string>
+    <string name="tab_requests_title">Pickup Requests</string>
+    <string name="tab_workers_title">Workers</string>
+
+    <!-- Admin overview -->
+    <string name="admin_welcome">Welcome,</string>
+    <string name="admin_summary">Operations summary</string>
+    <string name="admin_stat_collections">Collections</string>
+    <string name="admin_stat_weight">Total weight</string>
+    <string name="admin_stat_revenue">Total revenue</string>
+    <string name="admin_stat_workers">Active workers</string>
+    <string name="admin_stat_residents">Residents</string>
+    <string name="admin_stat_pending">Pending requests</string>
+    <string name="admin_recent_requests">Recent requests</string>
+    <string name="admin_see_all">See all →</string>
+    <string name="admin_no_requests">No requests yet</string>
+    <string name="admin_loading_failed">Could not load data</string>
+
+    <!-- Admin requests -->
+    <string name="admin_filter_all">All</string>
+    <string name="admin_filter_pending">Pending</string>
+    <string name="admin_filter_assigned">Assigned</string>
+    <string name="admin_filter_completed">Completed</string>
+    <string name="admin_filter_cancelled">Cancelled</string>
+    <string name="admin_request_actions">Update status</string>
+    <string name="admin_action_assign">Assign worker</string>
+    <string name="admin_action_complete">Mark completed</string>
+    <string name="admin_action_cancel">Cancel</string>
+    <string name="admin_action_pending">Set pending</string>
+    <string name="admin_status_updated">Status updated</string>
+    <string name="admin_status_failed">Could not update status</string>
+
+    <!-- Admin workers -->
+    <string name="admin_workers_empty">No workers</string>
+    <string name="admin_worker_collections">Collections</string>
+    <string name="admin_worker_weight">Weight (kg)</string>
+    <string name="admin_worker_trips">Trips</string>
+    <string name="admin_pending_link">📝 Pending applications</string>
+    <string name="admin_pending_title">Worker applications</string>
+    <string name="admin_pending_empty">No applications waiting for review</string>
+    <string name="admin_pending_approve">Approve</string>
+    <string name="admin_pending_reject">Reject</string>
+    <string name="admin_pending_approved">Worker approved</string>
+    <string name="admin_pending_rejected">Worker rejected</string>
+    <string name="admin_pending_reject_reason_hint">Reason</string>
+    <string name="admin_pending_reject_reason_required">A reason is required to reject</string>
+    <string name="admin_pending_view_document">View ID document</string>
+    <string name="admin_pending_field_id">ID</string>
+    <string name="admin_pending_field_areas">Areas</string>
+    <string name="admin_pending_field_vehicle_type">Vehicle</string>
+    <string name="admin_pending_field_vehicle_plate">Plate</string>
+    <string name="admin_pending_field_capacity">Capacity</string>
+
+    <!-- Admin profile -->
+    <string name="admin_role_label">Administrator</string>
+    <string name="admin_about_title">📊 Use the dashboard</string>
+    <string name="admin_about_body">For deeper analytics, finance, routes and trips visit the web dashboard at localhost:3001.</string>
 
     <!-- Worker tabs -->
     <string name="tab_today">Today</string>

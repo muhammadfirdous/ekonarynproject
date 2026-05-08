@@ -18,6 +18,8 @@ import {
   Settings,
   LogOut,
   Recycle,
+  UserPlus,
+  ScrollText,
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import { useT, LanguageToggle } from '@/lib/i18n';
@@ -34,11 +36,14 @@ function NavSection({
   return (
     <div className="mb-2">
       <div className="px-4 py-2">
-        <span className="text-[11px] font-semibold text-neutral-600 uppercase tracking-widest">{label}</span>
+        <span className="text-[11px] font-semibold text-neutral-600 uppercase tracking-widest">
+          {label}
+        </span>
       </div>
       {items.map((item) => {
         const Icon = item.icon;
-        const active = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
+        const active =
+          pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
         return (
           <Link
             key={item.href}
@@ -79,8 +84,10 @@ export default function Sidebar() {
   ];
 
   const managementNavItems = [
+    { href: '/workers/pending', label: t('sidebar.pendingWorkers'), icon: UserPlus },
     { href: '/financial', label: t('sidebar.financial'), icon: DollarSign },
     { href: '/analytics', label: t('sidebar.analytics'), icon: BarChart3 },
+    { href: '/activity', label: t('sidebar.activity'), icon: ScrollText },
   ];
 
   const directoryNavItems = [
@@ -109,8 +116,16 @@ export default function Sidebar() {
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-3">
         <NavSection label={t('sidebar.sectionMain')} items={mainNavItems} pathname={pathname} />
-        <NavSection label={t('sidebar.sectionManagement')} items={managementNavItems} pathname={pathname} />
-        <NavSection label={t('sidebar.sectionDirectories')} items={directoryNavItems} pathname={pathname} />
+        <NavSection
+          label={t('sidebar.sectionManagement')}
+          items={managementNavItems}
+          pathname={pathname}
+        />
+        <NavSection
+          label={t('sidebar.sectionDirectories')}
+          items={directoryNavItems}
+          pathname={pathname}
+        />
       </nav>
 
       {/* User area */}

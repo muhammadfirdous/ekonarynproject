@@ -19,6 +19,7 @@ import kg.ekonaryn.app.EkoApp;
 import kg.ekonaryn.app.LocaleHelper;
 import kg.ekonaryn.app.MainActivity;
 import kg.ekonaryn.app.R;
+import kg.ekonaryn.app.admin.AdminMainActivity;
 import kg.ekonaryn.app.api.ApiClient;
 import kg.ekonaryn.app.api.Async;
 import kg.ekonaryn.app.api.models.User;
@@ -120,9 +121,14 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void routeToHome(User user) {
-        Intent next = "WORKER".equals(user.role)
-                ? new Intent(this, WorkerMainActivity.class)
-                : new Intent(this, ResidentMainActivity.class);
+        Intent next;
+        if ("ADMIN".equals(user.role)) {
+            next = new Intent(this, AdminMainActivity.class);
+        } else if ("WORKER".equals(user.role)) {
+            next = new Intent(this, WorkerMainActivity.class);
+        } else {
+            next = new Intent(this, ResidentMainActivity.class);
+        }
         next.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(next);
         finish();

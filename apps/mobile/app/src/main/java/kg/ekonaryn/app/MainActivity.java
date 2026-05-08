@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import kg.ekonaryn.app.admin.AdminMainActivity;
 import kg.ekonaryn.app.api.models.User;
 import kg.ekonaryn.app.auth.LoginActivity;
 import kg.ekonaryn.app.resident.ResidentMainActivity;
@@ -27,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
         Intent next;
         if (user == null || EkoApp.get().auth().getToken() == null) {
             next = new Intent(this, LoginActivity.class);
+        } else if ("ADMIN".equals(user.role)) {
+            next = new Intent(this, AdminMainActivity.class);
         } else if ("WORKER".equals(user.role)) {
             next = new Intent(this, WorkerMainActivity.class);
         } else {

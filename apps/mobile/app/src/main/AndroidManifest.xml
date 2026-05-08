@@ -30,6 +30,8 @@
         <activity android:name=".auth.RegisterActivity" android:exported="false" />
         <activity android:name=".resident.ResidentMainActivity" android:exported="false" />
         <activity android:name=".worker.WorkerMainActivity" android:exported="false" />
+        <activity android:name=".admin.AdminMainActivity" android:exported="false" />
+        <activity android:name=".admin.PendingWorkersActivity" android:exported="false" />
 
     </application>
 
