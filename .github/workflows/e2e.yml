@@ -14,9 +14,22 @@ jobs:
   playwright:
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     env:
       JWT_SECRET: ci-test-secret
-      DATABASE_URL: file:./dev.db
+      DATABASE_URL: postgresql://test:test@localhost:5432/test
       CI: 'true'
 
     steps:
@@ -33,7 +46,7 @@ jobs:
       - name: Generate Prisma client
         run: npm run db:generate
 
-      - name: Push schema to dev.db (E2E reuses the dev DB; globalSetup re-seeds)
+      - name: Apply schema to the Postgres test DB (e2e globalSetup re-seeds)
         run: npm run db:push --workspace=@ekonaryn/db
 
       - name: Cache Playwright browsers

@@ -2,7 +2,10 @@ import { execSync } from 'child_process';
 import path from 'path';
 
 export default async function globalSetup() {
-  const url = 'postgresql://ekonaryn:ekonaryn_pass@localhost:5432/ekonaryn_test';
+  // CI sets DATABASE_URL via the workflow's postgres service container.
+  // Locally fall back to the docker-compose dev/test database.
+  const url =
+    process.env.DATABASE_URL || 'postgresql://ekonaryn:ekonaryn_pass@localhost:5432/ekonaryn_test';
   process.env.DATABASE_URL = url;
 
   // Wipe any leftover state from a prior failed run so each `npm test` starts clean.
