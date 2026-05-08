@@ -26,49 +26,58 @@ describe('Migrations — directory layout & lock file', () => {
     }
   });
 
-  test('migration_lock.toml exists and pins the SQLite provider', () => {
+  test('migration_lock.toml exists and pins the PostgreSQL provider', () => {
     const lockPath = path.join(DB_PKG, 'prisma/migrations/migration_lock.toml');
     expect(existsSync(lockPath)).toBe(true);
     const lock = readFileSync(lockPath, 'utf8');
-    expect(lock).toMatch(/provider\s*=\s*"sqlite"/);
+    expect(lock).toMatch(/provider\s*=\s*"postgresql"/);
   });
 
-  test('20260508 lifecycle migration includes the lowercase status backfill', () => {
-    const sqlPath = path.join(
-      DB_PKG,
-      'prisma/migrations/20260508_add_worker_lifecycle_and_activity_log/migration.sql',
+  test('Init migration creates every model declared in schema.prisma', () => {
+    const initDir = readdirSync(path.join(DB_PKG, 'prisma/migrations'), { withFileTypes: true })
+      .filter((d) => d.isDirectory() && d.name.endsWith('_init'))
+      .map((d) => d.name)[0];
+    expect(initDir).toBeDefined();
+    const sql = readFileSync(
+      path.join(DB_PKG, 'prisma/migrations', initDir, 'migration.sql'),
+      'utf8',
     );
-    const sql = readFileSync(sqlPath, 'utf8');
-    expect(sql).toMatch(
-      /UPDATE "PickupRequest" SET "status" = 'pending'\s+WHERE "status" = 'PENDING'/,
-    );
-    expect(sql).toMatch(
-      /UPDATE "PickupRequest" SET "status" = 'assigned'\s+WHERE "status" = 'ASSIGNED'/,
-    );
-    expect(sql).toMatch(
-      /UPDATE "PickupRequest" SET "status" = 'completed'\s+WHERE "status" = 'COMPLETED'/,
-    );
-    expect(sql).toMatch(
-      /UPDATE "PickupRequest" SET "status" = 'cancelled'\s+WHERE "status" = 'CANCELLED'/,
-    );
+    for (const model of [
+      'User',
+      'Material',
+      'PickupRequest',
+      'Collection',
+      'Trip',
+      'Route',
+      'FinancialRecord',
+      'Schedule',
+      'Notification',
+      'ActivityLog',
+    ]) {
+      expect(sql).toMatch(new RegExp(`CREATE TABLE "${model}"`));
+    }
   });
 
-  test('Lifecycle migration adds the assignedWorkerId FK column with ON DELETE SET NULL', () => {
-    const sqlPath = path.join(
-      DB_PKG,
-      'prisma/migrations/20260508_add_worker_lifecycle_and_activity_log/migration.sql',
+  test('Init migration adds assignedWorkerId FK with ON DELETE SET NULL', () => {
+    const initDir = readdirSync(path.join(DB_PKG, 'prisma/migrations'), { withFileTypes: true })
+      .filter((d) => d.isDirectory() && d.name.endsWith('_init'))
+      .map((d) => d.name)[0];
+    const sql = readFileSync(
+      path.join(DB_PKG, 'prisma/migrations', initDir, 'migration.sql'),
+      'utf8',
     );
-    const sql = readFileSync(sqlPath, 'utf8');
-    expect(sql).toMatch(/ALTER TABLE "PickupRequest" ADD COLUMN "assignedWorkerId" TEXT/);
-    expect(sql).toMatch(/REFERENCES "User"\("id"\) ON DELETE SET NULL/);
+    expect(sql).toMatch(/"assignedWorkerId" TEXT/);
+    expect(sql).toMatch(
+      /FOREIGN KEY \("assignedWorkerId"\) REFERENCES "User"\("id"\) ON DELETE SET NULL/,
+    );
   });
 });
 
-describe('Migrations — fresh-apply against a temp database', () => {
+describe('Migrations — fresh-apply against the test database', () => {
   // The dev workflow uses `prisma db push` (no _prisma_migrations table) for
   // speed. `migrate status` would report drift against that DB even though the
   // schema is correct. So instead we validate the migration files THEMSELVES
-  // can be parsed by sqlite — every CREATE/ALTER/UPDATE statement is wrapped
+  // can be parsed as SQL — every CREATE/ALTER/UPDATE statement is wrapped
   // by Prisma so a syntax error here would mean someone hand-edited a
   // historical migration (which is the regression we want to catch).
   test('Every migration.sql parses as valid SQL (heuristic check)', () => {
