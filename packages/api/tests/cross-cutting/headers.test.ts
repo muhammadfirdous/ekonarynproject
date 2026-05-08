@@ -14,13 +14,13 @@ describe('Cross-cutting: security and CORS headers', () => {
     expect(res.headers['strict-transport-security']).toMatch(/max-age=/);
   });
 
-  test('CORS allows arbitrary origins (current open default — see TEST_PLAN risks)', async () => {
+  test('CORS rejects arbitrary origins (allowlist enforced via CORS_ORIGINS)', async () => {
     const res = await request(app)
       .options('/api/v1/materials')
       .set('Origin', 'https://random.example.com')
       .set('Access-Control-Request-Method', 'GET');
-    // cors() defaults to mirroring the Origin / wildcarding everything.
-    // We don't assert a specific value — only that the header is present.
-    expect(res.headers['access-control-allow-origin']).toBeDefined();
+    // Allowlist is set in tests/setupEnv.ts to localhost:3000 / localhost:3001.
+    // An origin not on the list never receives Access-Control-Allow-Origin.
+    expect(res.headers['access-control-allow-origin']).toBeUndefined();
   });
 });

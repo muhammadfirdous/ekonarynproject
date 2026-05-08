@@ -5,3 +5,6 @@ process.env.DATABASE_URL = 'postgresql://ekonaryn:ekonaryn_pass@localhost:5432/e
 process.env.NODE_ENV = 'test';
 process.env.JWT_SECRET = 'test-secret';
 process.env.JWT_REFRESH_SECRET = 'test-refresh-secret';
+// CORS allowlist for tests that exercise the cors middleware. Tests that
+// don't send an Origin header are unaffected (cors passes them through).
+process.env.CORS_ORIGINS = 'http://localhost:3000,http://localhost:3001';

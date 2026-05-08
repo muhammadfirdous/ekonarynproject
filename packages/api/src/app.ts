@@ -8,8 +8,26 @@ import routes from './routes';
 
 const app = express();
 
+// Browser origins permitted by CORS. Comma-separated list; empty in test/dev
+// produces an empty allowlist (only same-origin / no-Origin requests work).
+// Mobile, curl, and server-to-server callers send no Origin and are always
+// allowed through.
+const allowedOrigins = (process.env.CORS_ORIGINS ?? '')
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
+
 app.use(helmet());
-app.use(cors());
+app.use(
+  cors({
+    origin: (origin, cb) => {
+      if (!origin) return cb(null, true);
+      if (allowedOrigins.includes(origin)) return cb(null, true);
+      return cb(new Error('CORS: origin not allowed'));
+    },
+    credentials: true,
+  }),
+);
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
