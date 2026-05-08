@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { Prisma } from '@prisma/client';
 
 export class AppError extends Error {
   statusCode: number;
@@ -15,6 +16,21 @@ export const errorHandler = (err: Error, _req: Request, res: Response, _next: Ne
       success: false,
       error: err.message,
     });
+  }
+
+  if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    if (err.code === 'P2002') {
+      return res.status(409).json({
+        success: false,
+        error: 'A record with this value already exists',
+      });
+    }
+    if (err.code === 'P2025') {
+      return res.status(404).json({
+        success: false,
+        error: 'Record not found',
+      });
+    }
   }
 
   console.error('Unhandled error:', err);
