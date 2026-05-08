@@ -44,6 +44,15 @@ async function main() {
         role: 'WORKER',
         address: 'ул. Токтогула 12, Нарын',
         points: 0,
+        accountStatus: 'ACTIVE',
+        phoneVerifiedAt: new Date(),
+        idNumber: 'AN1234567',
+        serviceAreas: JSON.stringify(['Центр', 'Микрорайон']),
+        vehicleType: 'pickup_truck',
+        vehiclePlate: '01KG123ABC',
+        vehicleCapacityKg: 800,
+        maxConcurrentOrders: 5,
+        onShift: true,
       },
     }),
     prisma.user.create({
@@ -54,6 +63,15 @@ async function main() {
         role: 'WORKER',
         address: 'ул. Манаса 78, Нарын',
         points: 0,
+        accountStatus: 'ACTIVE',
+        phoneVerifiedAt: new Date(),
+        idNumber: 'AN1234568',
+        serviceAreas: JSON.stringify(['Ак-Жол', 'Кызыл-Жылдыз']),
+        vehicleType: 'van',
+        vehiclePlate: '01KG456DEF',
+        vehicleCapacityKg: 600,
+        maxConcurrentOrders: 4,
+        onShift: true,
       },
     }),
     prisma.user.create({
@@ -64,6 +82,35 @@ async function main() {
         role: 'WORKER',
         address: 'Микрорайон 3, Нарын',
         points: 0,
+        accountStatus: 'ACTIVE',
+        phoneVerifiedAt: new Date(),
+        idNumber: 'AN1234569',
+        serviceAreas: JSON.stringify(['Нарын-1', 'Микрорайон']),
+        vehicleType: 'pickup_truck',
+        vehiclePlate: '01KG789GHI',
+        vehicleCapacityKg: 750,
+        maxConcurrentOrders: 5,
+        onShift: false,
+      },
+    }),
+    // Worker awaiting admin approval — exercises the new flow
+    prisma.user.create({
+      data: {
+        name: 'Эмиль Дуйшеев',
+        phone: '+996700000005',
+        password: await hashPassword('worker123'),
+        role: 'WORKER',
+        address: 'ул. Ленина 90, Нарын',
+        points: 0,
+        accountStatus: 'PENDING_APPROVAL',
+        phoneVerifiedAt: new Date(),
+        idNumber: 'AN9999991',
+        serviceAreas: JSON.stringify(['Центр']),
+        vehicleType: 'motorcycle',
+        vehiclePlate: '01KG010ZZZ',
+        vehicleCapacityKg: 150,
+        maxConcurrentOrders: 3,
+        onShift: false,
       },
     }),
   ]);
@@ -228,7 +275,7 @@ async function main() {
   const daysAgo = (d: number) => new Date(now.getTime() - d * 24 * 60 * 60 * 1000);
 
   const requests = await Promise.all([
-    // COMPLETED requests (10)
+    // completed requests (10)
     ...Array.from({ length: 10 }, (_, i) =>
       prisma.pickupRequest.create({
         data: {
@@ -236,13 +283,13 @@ async function main() {
           materialId: materials[i % materials.length].id,
           address: residents[i % residents.length].address!,
           estimatedQty: Math.floor(Math.random() * 20) + 3,
-          status: 'COMPLETED',
+          status: 'completed',
           notes: i % 3 === 0 ? 'Пожалуйста, позвоните перед приходом' : null,
           createdAt: daysAgo(Math.floor(Math.random() * 60) + 10),
         },
       }),
     ),
-    // PENDING requests (5)
+    // pending requests (5)
     ...Array.from({ length: 5 }, (_, i) =>
       prisma.pickupRequest.create({
         data: {
@@ -250,13 +297,13 @@ async function main() {
           materialId: materials[i % materials.length].id,
           address: residents[(i + 3) % residents.length].address!,
           estimatedQty: Math.floor(Math.random() * 15) + 2,
-          status: 'PENDING',
+          status: 'pending',
           notes: i === 0 ? 'У подъезда в черном мешке' : null,
           createdAt: daysAgo(Math.floor(Math.random() * 5)),
         },
       }),
     ),
-    // ASSIGNED requests (3)
+    // assigned requests (3)
     ...Array.from({ length: 3 }, (_, i) =>
       prisma.pickupRequest.create({
         data: {
@@ -264,12 +311,14 @@ async function main() {
           materialId: materials[i % materials.length].id,
           address: residents[(i + 6) % residents.length].address!,
           estimatedQty: Math.floor(Math.random() * 10) + 5,
-          status: 'ASSIGNED',
+          status: 'assigned',
+          assignedWorkerId: workers[i % workers.length].id,
+          assignedAt: daysAgo(Math.floor(Math.random() * 2)),
           createdAt: daysAgo(Math.floor(Math.random() * 3) + 1),
         },
       }),
     ),
-    // CANCELLED requests (2)
+    // cancelled requests (2)
     ...Array.from({ length: 2 }, (_, i) =>
       prisma.pickupRequest.create({
         data: {
@@ -277,15 +326,16 @@ async function main() {
           materialId: materials[i % materials.length].id,
           address: residents[(i + 8) % residents.length].address!,
           estimatedQty: Math.floor(Math.random() * 8) + 1,
-          status: 'CANCELLED',
+          status: 'cancelled',
           notes: 'Уже отдал другому сборщику',
+          cancellationReason: 'Resident gave to another collector',
           createdAt: daysAgo(Math.floor(Math.random() * 30) + 5),
         },
       }),
     ),
   ]);
 
-  const completedRequests = requests.filter((r) => r.status === 'COMPLETED');
+  const completedRequests = requests.filter((r) => r.status === 'completed');
 
   // ==================== TRIPS ====================
   console.log('🚛 Creating trips...');
@@ -376,29 +426,125 @@ async function main() {
 
   const financialRecords = [
     // Month 1 (2 months ago)
-    { type: 'INCOME', amount: 42500, description: 'Продажа пластика - Бишкек', category: 'sales', date: daysAgo(55) },
-    { type: 'EXPENSE', amount: 15000, description: 'Транспорт Нарын-Бишкек', category: 'transport', date: daysAgo(55) },
-    { type: 'EXPENSE', amount: 4250, description: 'Закупка у жителей - пластик', category: 'purchases', date: daysAgo(60) },
-    { type: 'EXPENSE', amount: 25000, description: 'Зарплата - Нурбек', category: 'salary', date: daysAgo(60) },
-    { type: 'EXPENSE', amount: 25000, description: 'Зарплата - Талант', category: 'salary', date: daysAgo(60) },
+    {
+      type: 'INCOME',
+      amount: 42500,
+      description: 'Продажа пластика - Бишкек',
+      category: 'sales',
+      date: daysAgo(55),
+    },
+    {
+      type: 'EXPENSE',
+      amount: 15000,
+      description: 'Транспорт Нарын-Бишкек',
+      category: 'transport',
+      date: daysAgo(55),
+    },
+    {
+      type: 'EXPENSE',
+      amount: 4250,
+      description: 'Закупка у жителей - пластик',
+      category: 'purchases',
+      date: daysAgo(60),
+    },
+    {
+      type: 'EXPENSE',
+      amount: 25000,
+      description: 'Зарплата - Нурбек',
+      category: 'salary',
+      date: daysAgo(60),
+    },
+    {
+      type: 'EXPENSE',
+      amount: 25000,
+      description: 'Зарплата - Талант',
+      category: 'salary',
+      date: daysAgo(60),
+    },
     { type: 'EXPENSE', amount: 3000, description: 'Бензин', category: 'fuel', date: daysAgo(58) },
-    { type: 'EXPENSE', amount: 1500, description: 'Мешки для сбора', category: 'supplies', date: daysAgo(57) },
+    {
+      type: 'EXPENSE',
+      amount: 1500,
+      description: 'Мешки для сбора',
+      category: 'supplies',
+      date: daysAgo(57),
+    },
 
     // Month 2 (1 month ago)
-    { type: 'INCOME', amount: 46000, description: 'Продажа пластика и картона - Бишкек', category: 'sales', date: daysAgo(25) },
-    { type: 'EXPENSE', amount: 15000, description: 'Транспорт Нарын-Бишкек', category: 'transport', date: daysAgo(25) },
-    { type: 'EXPENSE', amount: 4600, description: 'Закупка у жителей', category: 'purchases', date: daysAgo(30) },
-    { type: 'EXPENSE', amount: 25000, description: 'Зарплата - Нурбек', category: 'salary', date: daysAgo(30) },
-    { type: 'EXPENSE', amount: 25000, description: 'Зарплата - Талант', category: 'salary', date: daysAgo(30) },
+    {
+      type: 'INCOME',
+      amount: 46000,
+      description: 'Продажа пластика и картона - Бишкек',
+      category: 'sales',
+      date: daysAgo(25),
+    },
+    {
+      type: 'EXPENSE',
+      amount: 15000,
+      description: 'Транспорт Нарын-Бишкек',
+      category: 'transport',
+      date: daysAgo(25),
+    },
+    {
+      type: 'EXPENSE',
+      amount: 4600,
+      description: 'Закупка у жителей',
+      category: 'purchases',
+      date: daysAgo(30),
+    },
+    {
+      type: 'EXPENSE',
+      amount: 25000,
+      description: 'Зарплата - Нурбек',
+      category: 'salary',
+      date: daysAgo(30),
+    },
+    {
+      type: 'EXPENSE',
+      amount: 25000,
+      description: 'Зарплата - Талант',
+      category: 'salary',
+      date: daysAgo(30),
+    },
     { type: 'EXPENSE', amount: 3500, description: 'Бензин', category: 'fuel', date: daysAgo(28) },
-    { type: 'INCOME', amount: 5000, description: 'Грант от экологической организации', category: 'grant', date: daysAgo(22) },
+    {
+      type: 'INCOME',
+      amount: 5000,
+      description: 'Грант от экологической организации',
+      category: 'grant',
+      date: daysAgo(22),
+    },
 
     // Month 3 (current)
-    { type: 'INCOME', amount: 39000, description: 'Продажа смешанных материалов - Бишкек', category: 'sales', date: daysAgo(5) },
-    { type: 'EXPENSE', amount: 15000, description: 'Транспорт Нарын-Бишкек', category: 'transport', date: daysAgo(5) },
-    { type: 'EXPENSE', amount: 3900, description: 'Закупка у жителей', category: 'purchases', date: daysAgo(8) },
+    {
+      type: 'INCOME',
+      amount: 39000,
+      description: 'Продажа смешанных материалов - Бишкек',
+      category: 'sales',
+      date: daysAgo(5),
+    },
+    {
+      type: 'EXPENSE',
+      amount: 15000,
+      description: 'Транспорт Нарын-Бишкек',
+      category: 'transport',
+      date: daysAgo(5),
+    },
+    {
+      type: 'EXPENSE',
+      amount: 3900,
+      description: 'Закупка у жителей',
+      category: 'purchases',
+      date: daysAgo(8),
+    },
     { type: 'EXPENSE', amount: 2800, description: 'Бензин', category: 'fuel', date: daysAgo(6) },
-    { type: 'EXPENSE', amount: 2000, description: 'Ремонт прицепа', category: 'maintenance', date: daysAgo(3) },
+    {
+      type: 'EXPENSE',
+      amount: 2000,
+      description: 'Ремонт прицепа',
+      category: 'maintenance',
+      date: daysAgo(3),
+    },
   ];
 
   await Promise.all(

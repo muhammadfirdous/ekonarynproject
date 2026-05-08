@@ -9,6 +9,7 @@ import routePlannerRoutes from './routesPlanner';
 import financialRoutes from './financial';
 import analyticsRoutes from './analytics';
 import scheduleRoutes from './schedule';
+import activityRoutes from './activity';
 
 const router = Router();
 
@@ -22,5 +23,6 @@ router.use('/routes', routePlannerRoutes);
 router.use('/financial', financialRoutes);
 router.use('/analytics', analyticsRoutes);
 router.use('/schedule', scheduleRoutes);
+router.use('/activity', activityRoutes);
 
 export default router;

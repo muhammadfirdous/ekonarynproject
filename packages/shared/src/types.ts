@@ -4,11 +4,61 @@ export enum Role {
   RESIDENT = 'RESIDENT',
 }
 
+export enum AccountStatus {
+  ACTIVE = 'ACTIVE',
+  PENDING_APPROVAL = 'PENDING_APPROVAL',
+  REJECTED = 'REJECTED',
+  SUSPENDED = 'SUSPENDED',
+}
+
+export enum OrderStatus {
+  PENDING = 'pending',
+  ACCEPTED = 'accepted',
+  ASSIGNED = 'assigned',
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled',
+  REJECTED = 'rejected',
+  FAILED = 'failed',
+}
+
+export const ORDER_STATUSES = [
+  'pending',
+  'accepted',
+  'assigned',
+  'in_progress',
+  'completed',
+  'cancelled',
+  'rejected',
+  'failed',
+] as const;
+
+export const ACCOUNT_STATUSES = ['ACTIVE', 'PENDING_APPROVAL', 'REJECTED', 'SUSPENDED'] as const;
+
+export const ACTIVE_WORKER_STATUSES: AccountStatus[] = [AccountStatus.ACTIVE];
+
+export enum ActivityAction {
+  WORKER_REGISTERED = 'worker.registered',
+  WORKER_APPROVED = 'worker.approved',
+  WORKER_REJECTED = 'worker.rejected',
+  WORKER_SUSPENDED = 'worker.suspended',
+  WORKER_REACTIVATED = 'worker.reactivated',
+  REQUEST_CREATED = 'request.created',
+  REQUEST_CANCELLED = 'request.cancelled',
+  ORDER_ASSIGNED = 'order.assigned',
+  ORDER_REASSIGNED = 'order.reassigned',
+  ORDER_STATUS_CHANGED = 'order.status_changed',
+  AUTH_LOGIN = 'auth.login',
+  AUTH_LOGIN_BLOCKED = 'auth.login_blocked',
+}
+
+// Legacy alias retained for routes that still emit the older vocabulary.
+// New code should use OrderStatus.
 export enum RequestStatus {
-  PENDING = 'PENDING',
-  ASSIGNED = 'ASSIGNED',
-  COMPLETED = 'COMPLETED',
-  CANCELLED = 'CANCELLED',
+  PENDING = 'pending',
+  ASSIGNED = 'assigned',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled',
 }
 
 export enum FinancialType {
@@ -20,9 +70,22 @@ export interface User {
   id: string;
   name: string;
   phone: string;
+  email?: string | null;
   role: Role;
   address?: string;
   points: number;
+  accountStatus: AccountStatus;
+  statusReason?: string | null;
+  emailVerifiedAt?: string | null;
+  phoneVerifiedAt?: string | null;
+  idNumber?: string | null;
+  idDocumentUrl?: string | null;
+  serviceAreas?: string | null;
+  vehicleType?: string | null;
+  vehiclePlate?: string | null;
+  vehicleCapacityKg?: number | null;
+  maxConcurrentOrders?: number | null;
+  onShift?: boolean;
   createdAt: string;
 }
 
@@ -44,11 +107,15 @@ export interface PickupRequest {
   materialId: string;
   address: string;
   estimatedQty: number;
-  status: RequestStatus;
+  status: OrderStatus | string;
   notes?: string;
   createdAt: string;
+  assignedWorkerId?: string | null;
+  assignedAt?: string | null;
+  cancellationReason?: string | null;
   resident?: User;
   material?: Material;
+  assignedWorker?: User | null;
 }
 
 export interface Collection {
@@ -111,6 +178,19 @@ export interface Notification {
   title: string;
   body: string;
   read: boolean;
+  createdAt: string;
+}
+
+export interface ActivityLog {
+  id: string;
+  actorId?: string | null;
+  actorRole?: string | null;
+  action: string;
+  entityType: string;
+  entityId?: string | null;
+  metadata?: string | null;
+  ipAddress?: string | null;
+  userAgent?: string | null;
   createdAt: string;
 }
 

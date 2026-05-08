@@ -4,22 +4,53 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
+  url      = env("DATABASE_URL")
 }
 
 model User {
   id          String          @id @default(uuid())
   name        String
   phone       String          @unique
+  email       String?         @unique
   password    String
   role        String          @default("RESIDENT")
   address     String?
   points      Int             @default(0)
   createdAt   DateTime        @default(now())
-  collections Collection[]
-  requests    PickupRequest[]
-  routes      Route[]
-  trips       Trip[]
+
+  // Account lifecycle
+  accountStatus            String   @default("ACTIVE")
+  statusReason             String?
+  statusChangedAt          DateTime?
+  statusChangedById        String?
+
+  // Verification
+  emailVerifiedAt          DateTime?
+  phoneVerifiedAt          DateTime?
+  verificationCode         String?
+  verificationCodeExpiresAt DateTime?
+
+  // Worker-specific
+  idNumber                 String?
+  idDocumentUrl            String?
+  serviceAreas             String?   // JSON array
+  vehicleType              String?
+  vehiclePlate             String?
+  vehicleCapacityKg        Float?
+  maxConcurrentOrders      Int?      @default(5)
+  onShift                  Boolean   @default(false)
+
+  // Soft delete
+  deletedAt   DateTime?
+
+  collections      Collection[]
+  requests         PickupRequest[]      @relation("ResidentRequests")
+  assignedRequests PickupRequest[]      @relation("AssignedWorkerRequests")
+  routes           Route[]
+  trips            Trip[]
+
+  @@index([accountStatus])
+  @@index([role])
 }
 
 model Material {
@@ -37,17 +68,26 @@ model Material {
 }
 
 model PickupRequest {
-  id           String      @id @default(uuid())
-  resident     User        @relation(fields: [residentId], references: [id])
-  residentId   String
-  material     Material    @relation(fields: [materialId], references: [id])
-  materialId   String
-  address      String
-  estimatedQty Float
-  status       String      @default("PENDING")
-  notes        String?
-  createdAt    DateTime    @default(now())
-  collection   Collection?
+  id                 String      @id @default(uuid())
+  resident           User        @relation("ResidentRequests", fields: [residentId], references: [id])
+  residentId         String
+  material           Material    @relation(fields: [materialId], references: [id])
+  materialId         String
+  address            String
+  estimatedQty       Float
+  status             String      @default("pending")
+  notes              String?
+  createdAt          DateTime    @default(now())
+  assignedWorker     User?       @relation("AssignedWorkerRequests", fields: [assignedWorkerId], references: [id])
+  assignedWorkerId   String?
+  assignedAt         DateTime?
+  cancellationReason String?
+  deletedAt          DateTime?
+  collection         Collection?
+
+  @@index([status])
+  @@index([assignedWorkerId])
+  @@index([createdAt])
 }
 
 model Collection {
@@ -114,4 +154,24 @@ model Notification {
   body      String
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model ActivityLog {
+  id         String   @id @default(uuid())
+  actorId    String?
+  actorRole  String?
+  action     String
+  entityType String
+  entityId   String?
+  metadata   String?  // JSON string
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([entityType, entityId])
+  @@index([actorId])
+  @@index([action])
 }
