@@ -30,6 +30,11 @@ jobs:
     env:
       JWT_SECRET: ci-test-secret
       DATABASE_URL: postgresql://test:test@localhost:5432/test
+      # The api server boots via Playwright's webServer block and reads
+      # CORS_ORIGINS at request time. Without it, Task 3's allowlist
+      # rejects the dashboard's POST /auth/login from Origin
+      # http://localhost:3001 and every UI test fails on the redirect.
+      CORS_ORIGINS: http://localhost:3000,http://localhost:3001
       CI: 'true'
 
     steps:
