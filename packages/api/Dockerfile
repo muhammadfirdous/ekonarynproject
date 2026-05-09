@@ -5,6 +5,7 @@ WORKDIR /app
 # Copy root package files
 COPY package.json package-lock.json* ./
 COPY turbo.json ./
+COPY tsconfig.json ./
 
 # Copy package manifests
 COPY packages/api/package.json ./packages/api/
