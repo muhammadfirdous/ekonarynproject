@@ -22,6 +22,9 @@ COPY packages/api ./packages/api
 # Generate Prisma client
 RUN cd packages/db && npx prisma generate
 
+# Build db package (produces dist/ with type declarations needed by api)
+RUN cd packages/db && npm run build
+
 # Build shared package
 RUN cd packages/shared && npm run build
 
