@@ -10,6 +10,7 @@ import financialRoutes from './financial';
 import analyticsRoutes from './analytics';
 import scheduleRoutes from './schedule';
 import activityRoutes from './activity';
+import notificationRoutes from './notifications';
 
 const router = Router();
 
@@ -24,5 +25,6 @@ router.use('/financial', financialRoutes);
 router.use('/analytics', analyticsRoutes);
 router.use('/schedule', scheduleRoutes);
 router.use('/activity', activityRoutes);
+router.use('/notifications', notificationRoutes);
 
 export default router;
