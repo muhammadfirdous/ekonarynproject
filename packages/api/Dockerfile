@@ -25,6 +25,9 @@ RUN cd packages/db && npx prisma generate
 # Build shared package
 RUN cd packages/shared && npm run build
 
+# Build db package (compiles dist/ that @ekonaryn/api imports from)
+RUN cd packages/db && npm run build
+
 # Build API
 RUN cd packages/api && npm run build
 
