@@ -16,7 +16,12 @@ export default async function globalSetup() {
   try {
     await reset.$executeRawUnsafe('DROP SCHEMA IF EXISTS public CASCADE');
     await reset.$executeRawUnsafe('CREATE SCHEMA public');
-    await reset.$executeRawUnsafe('GRANT ALL ON SCHEMA public TO ekonaryn');
+    // The connecting user (whoever owns the URL) is the implicit owner of the
+    // freshly-created schema. We only need the explicit GRANT TO public so
+    // postgres 15+ stops blocking writes from the connecting role itself.
+    // We deliberately do NOT grant to a hardcoded role name — CI runs as
+    // `test`, local runs as `ekonaryn`, and an explicit GRANT to either
+    // would error against the other.
     await reset.$executeRawUnsafe('GRANT ALL ON SCHEMA public TO public');
   } finally {
     await reset.$disconnect();

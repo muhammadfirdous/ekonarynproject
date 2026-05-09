@@ -20,9 +20,12 @@ describe('Startup env guard (assertProductionEnv)', () => {
     warnSpy.mockRestore();
   });
 
-  // 64 random base64 chars — what `openssl rand -base64 48` produces.
-  const REAL_SECRET_A = 'EUjJZGGzfm0kg5fBqRRjSGEpxBwxHHTjzTgJVPZRBz8Ew0RhNXkQVMzQHtMJCJzc';
-  const REAL_SECRET_B = 'AHFGcG3kPV3hNxRLb6cUJxxHJxjPmEr5sRn0HAJBwxKFuhIjqj9DTPdNPPDmJYtl';
+  // Low-entropy placeholders: long enough to be semantically "a real secret",
+  // structured so gitleaks doesn't flag them as random base64 tokens.
+  // (The guard's only requirement is "not in the forbidden set" — entropy is
+  // irrelevant here.)
+  const REAL_SECRET_A = 'TEST-FIXTURE-NOT-A-REAL-SECRET-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+  const REAL_SECRET_B = 'TEST-FIXTURE-NOT-A-REAL-SECRET-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB';
   const REAL_DB_URL = 'postgresql://u:p@localhost:5432/db';
 
   describe('NODE_ENV=production', () => {

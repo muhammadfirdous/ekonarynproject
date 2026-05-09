@@ -51,6 +51,11 @@ jobs:
       - name: Generate Prisma client
         run: npm run db:generate
 
+      - name: Build workspace deps (api dev server resolves @ekonaryn/db via dist)
+        run: |
+          npm run build --workspace=@ekonaryn/shared
+          npm run build --workspace=@ekonaryn/db
+
       - name: Apply schema to the Postgres test DB (e2e globalSetup re-seeds)
         run: npm run db:push --workspace=@ekonaryn/db
 
