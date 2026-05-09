@@ -73,6 +73,11 @@ jobs:
       - run: npm ci
       - run: npm run db:generate
 
+      - name: Build workspace deps (jest resolves @ekonaryn/db and @ekonaryn/shared via dist)
+        run: |
+          npm run build --workspace=@ekonaryn/shared
+          npm run build --workspace=@ekonaryn/db
+
       - name: Apply migrations to the test database
         run: npx prisma migrate deploy
         working-directory: packages/db
