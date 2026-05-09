@@ -61,6 +61,13 @@ const ru = {
   },
   a11y: {
     notifications: 'Уведомления',
+    userMenu: 'Открыть меню пользователя',
+  },
+  header: {
+    notificationsTitle: 'Уведомления',
+    notificationsEmpty: 'Нет уведомлений',
+    settings: 'Настройки',
+    signOut: 'Выйти',
   },
   sidebar: {
     sectionMain: 'Основное',

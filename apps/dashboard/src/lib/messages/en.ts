@@ -63,6 +63,13 @@ const en: Messages = {
   },
   a11y: {
     notifications: 'Notifications',
+    userMenu: 'Open user menu',
+  },
+  header: {
+    notificationsTitle: 'Notifications',
+    notificationsEmpty: 'No notifications',
+    settings: 'Settings',
+    signOut: 'Sign out',
   },
   sidebar: {
     sectionMain: 'Main',
