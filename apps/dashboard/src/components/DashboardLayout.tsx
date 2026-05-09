@@ -5,7 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Sidebar from './Sidebar';
-import { Bell, LogOut, Settings as SettingsIcon } from 'lucide-react';
+import { Bell, LogOut, Menu, Settings as SettingsIcon } from 'lucide-react';
 import { useT } from '@/lib/i18n';
 import { api } from '@/lib/api';
 
@@ -25,9 +25,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname();
   const t = useT();
   const [openMenu, setOpenMenu] = useState<OpenMenu>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[] | null>(null);
   const [notifLoading, setNotifLoading] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
+
+  // Auto-close mobile sidebar on route change.
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -114,14 +120,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="min-h-screen bg-background">
-      <Sidebar />
-      <div className="ml-64">
+      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <div className="md:ml-64">
         <header
           ref={headerRef}
-          className="sticky top-0 z-40 bg-white border-b border-neutral-100 px-8 h-14 flex items-center justify-between"
+          className="sticky top-0 z-30 bg-white border-b border-neutral-100 px-4 md:px-8 h-14 flex items-center justify-between"
         >
-          <div>
-            <h2 className="text-[15px] font-semibold text-neutral-900">{pageTitle}</h2>
+          <div className="flex items-center gap-2 min-w-0">
+            <button
+              type="button"
+              aria-label="Open navigation"
+              onClick={() => setSidebarOpen(true)}
+              className="md:hidden w-9 h-9 -ml-1 rounded-lg hover:bg-neutral-100 flex items-center justify-center transition-colors flex-shrink-0"
+            >
+              <Menu className="h-5 w-5 text-neutral-700" aria-hidden="true" />
+            </button>
+            <h2 className="text-[15px] font-semibold text-neutral-900 truncate">{pageTitle}</h2>
           </div>
           <div className="flex items-center gap-3">
             {/* Notifications */}
@@ -246,7 +260,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
           </div>
         </header>
-        <main className="p-8">{children}</main>
+        <main className="p-4 md:p-8">{children}</main>
       </div>
     </div>
   );

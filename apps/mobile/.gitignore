@@ -1,0 +1,11 @@
+# Signing config — keep secrets out of git
+keystore.properties
+*.keystore
+*.jks
+
+# Local SDK path
+local.properties
+
+# Build artifacts
+build/
+.gradle/

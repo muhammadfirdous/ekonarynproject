@@ -1,7 +1,6 @@
 plugins {
     id 'com.android.application'
 }
-
 // API_BASE_URL is read from gradle properties so the release APK doesn't
 // hardcode the emulator loopback. Override per-build via either:
 //   - ~/.gradle/gradle.properties (for local release builds)
@@ -11,9 +10,27 @@ plugins {
 def apiBaseUrlDebug   = project.findProperty('API_BASE_URL_DEBUG')   ?: 'http://10.0.2.2:4000/api/v1'
 def apiBaseUrlRelease = project.findProperty('API_BASE_URL_RELEASE') ?: 'https://api.ekonaryn.kg/api/v1'
 
+// Load keystore properties for release signing
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace 'kg.ekonaryn.app'
     compileSdk 34
+
+    signingConfigs {
+        release {
+            if (keystorePropertiesFile.exists()) {
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            }
+        }
+    }
 
     defaultConfig {
         applicationId "kg.ekonaryn.app"
@@ -23,36 +40,32 @@ android {
         versionName "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildFeatures {
         viewBinding true
         buildConfig true
     }
-
     buildTypes {
         debug {
             // Android emulator -> host machine
             buildConfigField "String", "API_BASE_URL", "\"${apiBaseUrlDebug}\""
         }
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "String", "API_BASE_URL", "\"${apiBaseUrlRelease}\""
         }
     }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
-
     testOptions {
         unitTests {
             includeAndroidResources = true
         }
     }
 }
-
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -66,7 +79,6 @@ dependencies {
     implementation 'com.google.android.material:material:1.11.0'
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
     implementation 'com.google.code.gson:gson:2.10.1'
-
     // ---------- Unit tests (JVM, src/test) ----------
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-core:5.12.0'
@@ -75,7 +87,6 @@ dependencies {
     testImplementation 'androidx.test.ext:junit:1.1.5'
     testImplementation 'androidx.test:core:1.5.0'
     testImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
-
     // ---------- Instrumented tests (device/emulator, src/androidTest) ----------
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test:runner:1.5.2'
