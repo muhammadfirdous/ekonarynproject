@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  createContext,
-  useContext,
-  useMemo,
-  useState,
-  type ReactNode,
-} from 'react';
+import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
 import ru from './messages/ru';
 import en from './messages/en';
 import { LANG_COOKIE, type Lang } from './lang-config';
@@ -34,9 +28,7 @@ function resolve(dict: unknown, path: string): string | undefined {
 
 function interpolate(str: string, vars?: Record<string, string | number>): string {
   if (!vars) return str;
-  return str.replace(/\{(\w+)\}/g, (_, key) =>
-    key in vars ? String(vars[key]) : `{${key}}`,
-  );
+  return str.replace(/\{(\w+)\}/g, (_, key) => (key in vars ? String(vars[key]) : `{${key}}`));
 }
 
 function writeCookie(value: Lang) {
@@ -85,20 +77,22 @@ export function useT() {
   return useLang().t;
 }
 
-export function useLocalized<T extends Record<string, unknown>>(
+export function useLocalized<T>(
   item: T | null | undefined,
   fields: { ru: keyof T; en: keyof T },
 ): string {
   const { lang } = useLang();
   if (!item) return '';
-  const v = item[fields[lang]];
+  // Cast widens T (which may be a TS interface like Material with no index
+  // signature) to a string-indexable shape so we can read by keyof T at
+  // runtime without TS demanding an index signature on every callsite.
+  const v = (item as Record<keyof T, unknown>)[fields[lang]];
   return typeof v === 'string' ? v : '';
 }
 
 export function LanguageToggle({ className = '' }: { className?: string }) {
   const { lang, setLang } = useLang();
-  const baseBtn =
-    'text-xs font-semibold px-2.5 py-1 rounded-full transition-colors duration-150';
+  const baseBtn = 'text-xs font-semibold px-2.5 py-1 rounded-full transition-colors duration-150';
   return (
     <div
       className={`inline-flex items-center gap-0.5 rounded-full bg-neutral-100 p-1 ${className}`}

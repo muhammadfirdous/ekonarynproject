@@ -48,9 +48,22 @@ jobs:
 
   api-security-suite:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     env:
       JWT_SECRET: ci-test-secret
-      DATABASE_URL: file:./test.db
+      DATABASE_URL: postgresql://test:test@localhost:5432/test
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -59,6 +72,15 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run db:generate
+
+      - name: Build workspace deps (jest resolves @ekonaryn/db and @ekonaryn/shared via dist)
+        run: |
+          npm run build --workspace=@ekonaryn/shared
+          npm run build --workspace=@ekonaryn/db
+
+      - name: Apply migrations to the test database
+        run: npx prisma migrate deploy
+        working-directory: packages/db
 
       # Run only the security-focused subset (Phase 8). This is what guards
       # against auth bypass / IDOR / mass-assignment / injection regressions.

@@ -7,7 +7,7 @@ import { useApi } from '@/lib/hooks';
 import { useAuth } from '@/lib/auth';
 import { api } from '@/lib/api';
 import { formatDate } from '@/lib/utils';
-import { MapPin, Plus, User } from 'lucide-react';
+import { Plus, User } from 'lucide-react';
 import { useT } from '@/lib/i18n';
 
 interface Stop {
@@ -37,26 +37,40 @@ export default function RoutesPage() {
   const { data: workers } = useApi<Worker[]>('/users?role=WORKER');
 
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ workerId: '', date: '', stops: [{ address: '', order: 1, notes: '' }] });
+  const [form, setForm] = useState({
+    workerId: '',
+    date: '',
+    stops: [{ address: '', order: 1, notes: '' }],
+  });
   const [saving, setSaving] = useState(false);
 
   const addStop = () => {
-    setForm((f) => ({ ...f, stops: [...f.stops, { address: '', order: f.stops.length + 1, notes: '' }] }));
+    setForm((f) => ({
+      ...f,
+      stops: [...f.stops, { address: '', order: f.stops.length + 1, notes: '' }],
+    }));
   };
 
   const removeStop = (index: number) => {
-    setForm((f) => ({ ...f, stops: f.stops.filter((_, i) => i !== index).map((s, i) => ({ ...s, order: i + 1 })) }));
+    setForm((f) => ({
+      ...f,
+      stops: f.stops.filter((_, i) => i !== index).map((s, i) => ({ ...s, order: i + 1 })),
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     try {
-      await api.post('/routes', {
-        workerId: form.workerId,
-        date: new Date(form.date).toISOString(),
-        stops: form.stops.filter((s) => s.address.trim()),
-      }, token!);
+      await api.post(
+        '/routes',
+        {
+          workerId: form.workerId,
+          date: new Date(form.date).toISOString(),
+          stops: form.stops.filter((s) => s.address.trim()),
+        },
+        token!,
+      );
       setShowForm(false);
       setForm({ workerId: '', date: '', stops: [{ address: '', order: 1, notes: '' }] });
       refetch();
@@ -84,10 +98,15 @@ export default function RoutesPage() {
       />
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6 mb-6">
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6 mb-6"
+        >
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-neutral-900 mb-1.5">{t('routes.worker')}</label>
+              <label className="block text-sm font-medium text-neutral-900 mb-1.5">
+                {t('routes.worker')}
+              </label>
               <select
                 value={form.workerId}
                 onChange={(e) => setForm((f) => ({ ...f, workerId: e.target.value }))}
@@ -96,12 +115,16 @@ export default function RoutesPage() {
               >
                 <option value="">{t('routes.chooseWorker')}</option>
                 {workers?.map((w) => (
-                  <option key={w.id} value={w.id}>{w.name}</option>
+                  <option key={w.id} value={w.id}>
+                    {w.name}
+                  </option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-neutral-900 mb-1.5">{t('routes.date')}</label>
+              <label className="block text-sm font-medium text-neutral-900 mb-1.5">
+                {t('routes.date')}
+              </label>
               <input
                 type="date"
                 value={form.date}
@@ -112,7 +135,9 @@ export default function RoutesPage() {
             </div>
           </div>
 
-          <label className="block text-sm font-medium text-neutral-900 mb-2">{t('routes.stops')}</label>
+          <label className="block text-sm font-medium text-neutral-900 mb-2">
+            {t('routes.stops')}
+          </label>
           {form.stops.map((stop, i) => (
             <div key={i} className="flex gap-2 mb-2">
               <span className="flex items-center justify-center w-8 h-10 bg-brand-50 rounded text-sm font-medium text-brand-700">
@@ -140,19 +165,37 @@ export default function RoutesPage() {
                 className="w-48 px-3 py-2 border border-neutral-200 rounded-lg text-sm"
               />
               {form.stops.length > 1 && (
-                <button type="button" onClick={() => removeStop(i)} className="text-red-400 hover:text-red-600 px-2">✕</button>
+                <button
+                  type="button"
+                  onClick={() => removeStop(i)}
+                  className="text-red-400 hover:text-red-600 px-2"
+                >
+                  ✕
+                </button>
               )}
             </div>
           ))}
-          <button type="button" onClick={addStop} className="text-sm text-brand-700 hover:underline mt-1 mb-4">
+          <button
+            type="button"
+            onClick={addStop}
+            className="text-sm text-brand-700 hover:underline mt-1 mb-4"
+          >
             {t('routes.addStop')}
           </button>
 
           <div className="flex gap-3">
-            <button type="submit" disabled={saving} className="bg-brand-700 text-white px-6 py-2 rounded-lg disabled:opacity-50">
+            <button
+              type="submit"
+              disabled={saving}
+              className="bg-brand-700 text-white px-6 py-2 rounded-lg disabled:opacity-50"
+            >
               {saving ? t('common.saving') : t('routes.createButton')}
             </button>
-            <button type="button" onClick={() => setShowForm(false)} className="px-6 py-2 border border-neutral-200 rounded-lg">
+            <button
+              type="button"
+              onClick={() => setShowForm(false)}
+              className="px-6 py-2 border border-neutral-200 rounded-lg"
+            >
               {t('common.cancel')}
             </button>
           </div>
@@ -161,23 +204,34 @@ export default function RoutesPage() {
 
       {loading ? (
         <div className="space-y-4">
-          {[1, 2, 3].map((i) => <div key={i} className="bg-white rounded-2xl p-6 h-32 animate-pulse" />)}
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="bg-white rounded-2xl p-6 h-32 animate-pulse" />
+          ))}
         </div>
       ) : (
         <div className="space-y-4">
           {routes && routes.length > 0 ? (
             routes.map((route) => (
-              <div key={route.id} className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6">
+              <div
+                key={route.id}
+                className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6"
+              >
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <User className="h-5 w-5 text-neutral-500" />
                     <span className="font-medium">{route.worker?.name}</span>
                     <span className="text-sm text-neutral-500">· {formatDate(route.date)}</span>
                   </div>
-                  <span className={`text-xs px-2 py-1 rounded-full ${
-                    route.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
-                  }`}>
-                    {route.status === 'active' ? t('routes.statusActive') : t('routes.statusFinished')}
+                  <span
+                    className={`text-xs px-2 py-1 rounded-full ${
+                      route.status === 'active'
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-gray-100 text-gray-600'
+                    }`}
+                  >
+                    {route.status === 'active'
+                      ? t('routes.statusActive')
+                      : t('routes.statusFinished')}
                   </span>
                 </div>
                 <div className="space-y-2">
@@ -196,7 +250,9 @@ export default function RoutesPage() {
               </div>
             ))
           ) : (
-            <div className="bg-white rounded-2xl p-8 text-center text-neutral-500">{t('routes.empty')}</div>
+            <div className="bg-white rounded-2xl p-8 text-center text-neutral-500">
+              {t('routes.empty')}
+            </div>
           )}
         </div>
       )}

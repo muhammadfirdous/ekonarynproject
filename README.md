@@ -9,31 +9,32 @@ ekonaryn/
 ├── apps/
 │   ├── website/        → Public-facing Next.js site       (port 3000)
 │   ├── dashboard/      → Admin panel (Next.js)            (port 3001)
-│   └── mobile/         → React Native app (Expo)
+│   └── mobile/         → Native Android app (Java + Gradle)
 ├── packages/
 │   ├── api/            → Express.js REST API              (port 4000)
 │   ├── db/             → Prisma schema + PostgreSQL
 │   └── shared/         → Shared types, Zod schemas, constants
-├── docker-compose.yml  → PostgreSQL + pgAdmin + API
+├── docker-compose.yml  → PostgreSQL + pgAdmin + API (dev)
+├── docker-compose.prod.yml → Production stack behind Caddy
 └── turbo.json          → Turborepo config
 ```
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Monorepo | Turborepo, npm workspaces |
-| Backend | Express.js, TypeScript, Prisma, PostgreSQL, JWT, Multer, Zod |
-| Website | Next.js 14 (App Router), Tailwind CSS |
-| Dashboard | Next.js 14, Tailwind CSS, Recharts, TanStack Table |
-| Mobile | Expo (React Native), Expo Router, Expo Camera, Expo SecureStore |
-| Shared | TypeScript types, Zod validation schemas |
+| Layer     | Technology                                                                 |
+| --------- | -------------------------------------------------------------------------- |
+| Monorepo  | Turborepo, npm workspaces                                                  |
+| Backend   | Express.js, TypeScript, Prisma, PostgreSQL, JWT, Multer, Zod               |
+| Website   | Next.js 14 (App Router), Tailwind CSS                                      |
+| Dashboard | Next.js 14, Tailwind CSS, Recharts, TanStack Table                         |
+| Mobile    | Native Android (Java, AGP 8.2.2, OkHttp, Gson, EncryptedSharedPreferences) |
+| Shared    | TypeScript types, Zod validation schemas                                   |
 
 ## Prerequisites
 
-- Node.js 18+
-- Docker & Docker Compose
-- (For mobile) Expo CLI, iOS Simulator or Android Emulator
+- Node.js 18+ (CI uses 20)
+- Docker & Docker Compose v2 (`docker compose`, not legacy `docker-compose`)
+- (For mobile) JDK 17 and Android SDK 34 / Android Emulator
 
 ## Quick Start
 
@@ -48,37 +49,41 @@ npm install
 ### 2. Start Database
 
 ```bash
-docker-compose up -d postgres pgadmin
+docker compose up -d postgres pgadmin
+# Once-only: create the separate test database for `npm test`.
+docker compose exec -T postgres psql -U ekonaryn -c "CREATE DATABASE ekonaryn_test;"
 ```
 
 - PostgreSQL: `localhost:5432`
 - pgAdmin: `localhost:5050` (admin@ekonaryn.kg / admin123)
 
+> **Note:** as of the `deploy/prep` work, the Prisma provider is `postgresql`
+> (not SQLite). Bring up the postgres container before running tests or
+> dev servers.
+
 ### 3. Set Up Environment
 
 ```bash
-# API
-cp packages/api/.env.example packages/api/.env
+# Root template — copy and edit values to suit your environment
+cp .env.example .env
 
-# Database
-cp packages/db/.env.example packages/db/.env
-
-# Website
-cp apps/website/.env.example apps/website/.env
-
-# Dashboard
-cp apps/dashboard/.env.example apps/dashboard/.env
-
-# Mobile
-cp apps/mobile/.env.example apps/mobile/.env
+# Workspace .env files (auto-loaded by Prisma CLI / API server)
+cp packages/api/.env.example packages/api/.env || true
+cp packages/db/.env.example  packages/db/.env  || true
 ```
+
+The mobile app reads its base URL from gradle properties (`API_BASE_URL_DEBUG`
+/ `API_BASE_URL_RELEASE`), not a `.env` file. See `apps/mobile/app/build.gradle`.
 
 ### 4. Initialize Database
 
 ```bash
-cd packages/db
-npx prisma migrate dev --name init
-npx prisma db seed
+# Apply the existing migrations to the empty `ekonaryn` database.
+npm run db:generate
+npx prisma migrate deploy --schema=packages/db/prisma/schema.prisma
+
+# Seed for local dev (NEVER run against production — see DEPLOYMENT.md §4.2).
+npm run db:seed
 ```
 
 ### 5. Build Shared Packages
@@ -98,15 +103,18 @@ npm run dev
 cd packages/api && npm run dev     # API on :4000
 cd apps/website && npm run dev     # Website on :3000
 cd apps/dashboard && npm run dev   # Dashboard on :3001
-cd apps/mobile && npm run dev      # Expo dev server
+
+# Mobile (separate toolchain):
+cd apps/mobile && ./gradlew assembleDebug          # build a debug APK
+cd apps/mobile && ./gradlew testDebugUnitTest      # JVM unit tests
 ```
 
 ## Test Credentials
 
-| Role | Phone | Password |
-|------|-------|----------|
-| Admin | +996700000001 | admin123 |
-| Worker | +996700000002 | worker123 |
+| Role     | Phone         | Password    |
+| -------- | ------------- | ----------- |
+| Admin    | +996700000001 | admin123    |
+| Worker   | +996700000002 | worker123   |
 | Resident | +996700100001 | resident123 |
 
 ## API Documentation
@@ -117,24 +125,35 @@ Base URL: `http://localhost:4000/api/v1`
 
 ### Key Endpoints
 
-| Group | Endpoints |
-|-------|----------|
-| Auth | register, login, refresh, me |
-| Users | CRUD (admin only list) |
-| Materials | public list, admin CRUD |
+| Group           | Endpoints                                       |
+| --------------- | ----------------------------------------------- |
+| Auth            | register, login, refresh, me                    |
+| Users           | CRUD (admin only list)                          |
+| Materials       | public list, admin CRUD                         |
 | Pickup Requests | resident create, admin/worker status management |
-| Collections | worker log with photo, auto-complete requests |
-| Trips | Bishkek trip tracking with revenue |
-| Routes | admin route planning by worker/date |
-| Financial | income/expense tracking, profit summary |
-| Analytics | overview, monthly, materials, workers |
-| Schedule | public collection schedule, admin CRUD |
+| Collections     | worker log with photo, auto-complete requests   |
+| Trips           | Bishkek trip tracking with revenue              |
+| Routes          | admin route planning by worker/date             |
+| Financial       | income/expense tracking, profit summary         |
+| Analytics       | overview, monthly, materials, workers           |
+| Schedule        | public collection schedule, admin CRUD          |
 
 ## Database Schema
 
-9 models: User, Material, PickupRequest, Collection, Trip, Route, FinancialRecord, Schedule, Notification
+10 models: User, Material, PickupRequest, Collection, Trip, Route,
+FinancialRecord, Schedule, Notification, **ActivityLog**.
 
-4 enums: Role (ADMIN/WORKER/RESIDENT), RequestStatus, FinancialType
+6 enums (modelled as strings on the database side, validated in
+`packages/shared/src/types.ts`):
+
+| Enum             | Values                                                                                                  |
+| ---------------- | ------------------------------------------------------------------------------------------------------- |
+| `Role`           | `ADMIN` / `WORKER` / `RESIDENT`                                                                         |
+| `AccountStatus`  | `ACTIVE` / `PENDING_APPROVAL` / `REJECTED` / `SUSPENDED`                                                |
+| `OrderStatus`    | `pending` / `accepted` / `assigned` / `in_progress` / `completed` / `cancelled` / `rejected` / `failed` |
+| `ActivityAction` | 13 values (see `types.ts:40-53`)                                                                        |
+| `FinancialType`  | `INCOME` / `EXPENSE`                                                                                    |
+| `RequestStatus`  | (legacy uppercase variant kept for back-compat)                                                         |
 
 See full schema: [packages/db/prisma/schema.prisma](packages/db/prisma/schema.prisma)
 
@@ -152,75 +171,105 @@ The seed script creates realistic data for development:
 
 ## Dashboard Pages
 
-| Path | Description |
-|------|-------------|
-| `/` | Overview with stats cards + recent activity |
-| `/collections` | Collections table with search/sort |
-| `/collections/new` | Log a new collection |
-| `/requests` | Pickup requests with status filters + actions |
-| `/routes` | Route planner with dynamic stops |
-| `/trips` | Bishkek trips with profit calculation |
-| `/financial` | Income/expense tracker + summary |
-| `/analytics` | Charts (monthly volume, materials pie, worker stats) |
-| `/workers` | Worker management table |
-| `/residents` | Resident database with points |
-| `/materials` | Material prices with margin display |
-| `/schedule` | Collection schedule editor by area |
-| `/settings` | Admin profile + system info |
+| Path               | Description                                          |
+| ------------------ | ---------------------------------------------------- |
+| `/`                | Overview with stats cards + recent activity          |
+| `/collections`     | Collections table with search/sort                   |
+| `/collections/new` | Log a new collection                                 |
+| `/requests`        | Pickup requests with status filters + actions        |
+| `/routes`          | Route planner with dynamic stops                     |
+| `/trips`           | Bishkek trips with profit calculation                |
+| `/financial`       | Income/expense tracker + summary                     |
+| `/analytics`       | Charts (monthly volume, materials pie, worker stats) |
+| `/workers`         | Worker management table                              |
+| `/residents`       | Resident database with points                        |
+| `/materials`       | Material prices with margin display                  |
+| `/schedule`        | Collection schedule editor by area                   |
+| `/settings`        | Admin profile + system info                          |
 
 ## Website Pages
 
-| Path | Description |
-|------|-------------|
-| `/` | Hero, how it works, animated impact counter, CTA |
-| `/about` | Company story, values, team |
+| Path         | Description                                         |
+| ------------ | --------------------------------------------------- |
+| `/`          | Hero, how it works, animated impact counter, CTA    |
+| `/about`     | Company story, values, team                         |
 | `/materials` | Prices from API, accepted/rejected items, prep tips |
-| `/schedule` | Collection schedule from API by day |
-| `/request` | Pickup request form (auto register/login) |
-| `/education` | Why recycle, why not burn, decomposition timeline |
-| `/contact` | Contact info, map link, contact form |
+| `/schedule`  | Collection schedule from API by day                 |
+| `/request`   | Pickup request form (auto register/login)           |
+| `/education` | Why recycle, why not burn, decomposition timeline   |
+| `/contact`   | Contact info, map link, contact form                |
 
-## Mobile App Screens
+## Mobile App (native Android, Java)
 
-### Resident Flow (5 tabs)
-- **Home** — Welcome, points, quick request, schedule preview, recent requests
-- **Request** — Material selector, address, weight, notes
-- **History** — All requests with status badges
-- **Schedule** — Collection schedule by day
-- **Profile** — Points card, info, education tip, logout
+`apps/mobile/` is a native Android Java project (not React Native, not
+Expo). 27 Java files under
+`apps/mobile/app/src/main/java/kg/ekonaryn/app/` covering three role
+flows.
 
-### Worker Flow (4 tabs)
-- **Today** — Daily route with map links, assigned requests with call
-- **Collect** — Log collection with camera photo upload
-- **History** — Collection history with weight totals
-- **Profile** — Contact info, dispatcher phone, logout
+| Layer            | Files                                                                                                                                                  |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| API client       | `api/ApiClient.java`, `api/Async.java`, `api/ApiException.java`, `api/models/*.java`                                                                   |
+| Auth             | `auth/AuthManager.java` (uses `androidx.security:security-crypto` EncryptedSharedPreferences), `auth/LoginActivity.java`, `auth/RegisterActivity.java` |
+| Navigation entry | `MainActivity.java` (role splitter)                                                                                                                    |
+| Resident flow    | 5 fragments under `resident/` (Home, Request, History, Schedule, Profile)                                                                              |
+| Worker flow      | 4 fragments under `worker/` (Today, Collect, MyCollections, WorkerProfile)                                                                             |
+| Admin flow       | 4 fragments under `admin/` + `PendingWorkersActivity`                                                                                                  |
+
+API base URL is set at build time via gradle properties:
+
+| Property               | Default                          |
+| ---------------------- | -------------------------------- |
+| `API_BASE_URL_DEBUG`   | `http://10.0.2.2:4000/api/v1`    |
+| `API_BASE_URL_RELEASE` | `https://api.ekonaryn.kg/api/v1` |
+
+Override per-build with `-PAPI_BASE_URL_RELEASE=https://prod/api/v1`
+(or via `~/.gradle/gradle.properties`).
 
 ## Design System
 
-| Token | Value |
-|-------|-------|
-| Primary | `#1B5E20` (deep forest green) |
-| Primary2 | `#2E7D32` |
-| Accent | `#4CAF50` (bright green) |
-| Light | `#E8F5E9` |
-| Background | `#F9F9F4` (cream) |
-| Text | `#1C2A1C` |
-| Gray | `#546E7A` |
-| Font | Inter (web), System (mobile) |
-| Border Radius | 8px default, 12px cards |
+| Token         | Value                         |
+| ------------- | ----------------------------- |
+| Primary       | `#1B5E20` (deep forest green) |
+| Primary2      | `#2E7D32`                     |
+| Accent        | `#4CAF50` (bright green)      |
+| Light         | `#E8F5E9`                     |
+| Background    | `#F9F9F4` (cream)             |
+| Text          | `#1C2A1C`                     |
+| Gray          | `#546E7A`                     |
+| Font          | Inter (web), System (mobile)  |
+| Border Radius | 8px default, 12px cards       |
 
 ## Docker
 
 ```bash
-# Start everything
-docker-compose up -d
+# Dev: just the database (apps run on the host via `npm run dev`)
+docker compose up -d postgres
 
-# Just database
-docker-compose up -d postgres
+# Dev: postgres + pgAdmin
+docker compose up -d postgres pgadmin
 
-# Rebuild API container
-docker-compose up -d --build api
+# Dev: bring up the API container too (rebuild on source change)
+docker compose up -d --build api
 ```
+
+For the production compose stack (api + website + dashboard + caddy),
+see **Production deployment** below.
+
+## Production deployment
+
+The first production deploy targets a single Hetzner VPS with all
+services running under `docker compose -f docker-compose.prod.yml`,
+fronted by Caddy with auto-TLS. The full architecture, secrets layout,
+backup strategy, and step-by-step runbook live in
+[DEPLOYMENT.md](DEPLOYMENT.md).
+
+Quick reference:
+
+- Production compose: [`docker-compose.prod.yml`](docker-compose.prod.yml)
+- Edge proxy config: [`deploy/Caddyfile`](deploy/Caddyfile)
+- Backup script: [`deploy/scripts/backup.sh`](deploy/scripts/backup.sh)
+- First-admin bootstrap: `npm run admin:create` (see DEPLOYMENT.md §4.2)
+- Security policy + reporting: [SECURITY.md](SECURITY.md)
 
 ## Project Structure
 

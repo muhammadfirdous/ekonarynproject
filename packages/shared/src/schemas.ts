@@ -1,7 +1,9 @@
 import { z } from 'zod';
 import { ORDER_STATUSES, ACCOUNT_STATUSES } from './types';
 
-const phoneSchema = z.string().regex(/^\+996\d{9}$/, 'Phone must be in format +996XXXXXXXXX');
+export const phoneSchema = z
+  .string()
+  .regex(/^\+996\d{9}$/, 'Phone must be in format +996XXXXXXXXX');
 
 // ============================================================================
 // Auth & registration

@@ -14,9 +14,27 @@ jobs:
   playwright:
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     env:
       JWT_SECRET: ci-test-secret
-      DATABASE_URL: file:./dev.db
+      DATABASE_URL: postgresql://test:test@localhost:5432/test
+      # The api server boots via Playwright's webServer block and reads
+      # CORS_ORIGINS at request time. Without it, Task 3's allowlist
+      # rejects the dashboard's POST /auth/login from Origin
+      # http://localhost:3001 and every UI test fails on the redirect.
+      CORS_ORIGINS: http://localhost:3000,http://localhost:3001
       CI: 'true'
 
     steps:
@@ -33,7 +51,12 @@ jobs:
       - name: Generate Prisma client
         run: npm run db:generate
 
-      - name: Push schema to dev.db (E2E reuses the dev DB; globalSetup re-seeds)
+      - name: Build workspace deps (api dev server resolves @ekonaryn/db via dist)
+        run: |
+          npm run build --workspace=@ekonaryn/shared
+          npm run build --workspace=@ekonaryn/db
+
+      - name: Apply schema to the Postgres test DB (e2e globalSetup re-seeds)
         run: npm run db:push --workspace=@ekonaryn/db
 
       - name: Cache Playwright browsers

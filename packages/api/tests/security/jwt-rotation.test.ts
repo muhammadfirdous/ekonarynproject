@@ -72,7 +72,64 @@ describe('JWT secret rotation', () => {
     expect(res.status).toBe(401);
   });
 
-  // Rate limiting tracker — current production has none.
-  test.todo('FUTURE: /auth/login should rate-limit repeated bad-password attempts (none today)');
-  test.todo('FUTURE: /auth/verify/resend should rate-limit code resends (none today)');
+  describe('Rate limiting', () => {
+    // The auth limiter is shared across /login, /refresh, /verify/resend.
+    // It's disabled by default in tests via DISABLE_RATE_LIMIT=true (see
+    // tests/setupEnv.ts) so the rest of the suite doesn't trip the
+    // 20-attempt window. These tests temporarily un-set that flag.
+    let original: string | undefined;
+    beforeEach(async () => {
+      original = process.env.DISABLE_RATE_LIMIT;
+      delete process.env.DISABLE_RATE_LIMIT;
+      const { resetAuthLimiter } = await import('../../src/middleware/rateLimit');
+      resetAuthLimiter();
+    });
+    afterEach(async () => {
+      const { resetAuthLimiter } = await import('../../src/middleware/rateLimit');
+      resetAuthLimiter();
+      if (original === undefined) delete process.env.DISABLE_RATE_LIMIT;
+      else process.env.DISABLE_RATE_LIMIT = original;
+    });
+
+    test('/auth/login throttles after 20 attempts in 15 minutes', async () => {
+      const app = (await import('../../src/app')).default;
+      const responses = [];
+      for (let i = 0; i < 21; i++) {
+        responses.push(
+          await request(app)
+            .post('/api/v1/auth/login')
+            .send({ phone: '+996700000001', password: 'wrong' }),
+        );
+      }
+      // First 20 hit the route handler (and return 401 for bad password).
+      // The 21st is throttled before reaching the handler.
+      expect(responses.slice(0, 20).every((r) => r.status === 401)).toBe(true);
+      expect(responses[20].status).toBe(429);
+      expect(responses[20].body).toEqual({
+        error: { code: 'RATE_LIMIT', message: 'Too many attempts' },
+      });
+    });
+
+    test('/auth/verify/resend throttles after 20 attempts in 15 minutes', async () => {
+      const app = (await import('../../src/app')).default;
+      const { prisma } = await import('@ekonaryn/db');
+      await prisma.user.create({
+        data: {
+          name: 'Throttle Test',
+          phone: '+996700777111',
+          password: 'hash',
+          role: 'RESIDENT',
+          accountStatus: 'ACTIVE',
+        },
+      });
+      const responses = [];
+      for (let i = 0; i < 21; i++) {
+        responses.push(
+          await request(app).post('/api/v1/auth/verify/resend').send({ phone: '+996700777111' }),
+        );
+      }
+      expect(responses.slice(0, 20).every((r) => r.status === 200)).toBe(true);
+      expect(responses[20].status).toBe(429);
+    });
+  });
 });

@@ -1,0 +1,13 @@
+# gitleaks ignore list. Each line is a `<commit>:<file>:<rule>:<line>` fingerprint
+# emitted by `gitleaks detect`. Entries here document KNOWN false-positives
+# that already exist in committed history; new findings on HEAD still fail
+# the scan.
+
+# Two test fixtures in tests/startup.test.ts that were 64-char base64-style
+# strings — high entropy made gitleaks treat them as real generic API keys.
+# They were never real secrets (just test inputs for the strong-secret branch
+# of assertProductionEnv) and were replaced with low-entropy placeholders in
+# commit 58dd68c. The bad strings persist in commit c5fc02d's diff, which is
+# what these fingerprints match.
+c5fc02d2316f848d3a555e7f1155768c9ff564c0:packages/api/tests/startup.test.ts:generic-api-key:24
+c5fc02d2316f848d3a555e7f1155768c9ff564c0:packages/api/tests/startup.test.ts:generic-api-key:25

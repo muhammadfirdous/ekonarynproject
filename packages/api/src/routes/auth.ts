@@ -14,9 +14,16 @@ import {
 } from '@ekonaryn/shared';
 import { validate } from '../middleware/validate';
 import { authenticate } from '../middleware/auth';
+import { authLimiter } from '../middleware/rateLimit';
 import { generateTokens, verifyRefreshToken } from '../utils/tokens';
 import { upload } from '../utils/upload';
-import { generateCode, codeExpiry, isCodeValid, shouldExposeCode } from '../utils/verification';
+import {
+  generateCode,
+  codeExpiry,
+  isCodeValid,
+  shouldExposeCode,
+  isPhoneVerificationSkipped,
+} from '../utils/verification';
 import { logActivity } from '../services/activityLog';
 import { AppError } from '../middleware/error';
 
@@ -67,7 +74,8 @@ router.post(
       if (existing) throw new AppError('Phone number already registered', 409);
 
       const hashedPassword = await bcrypt.hash(password, 10);
-      const code = generateCode();
+      const verifyDisabled = isPhoneVerificationSkipped();
+      const code = verifyDisabled ? null : generateCode();
       const user = await prisma.user.create({
         data: {
           name,
@@ -76,8 +84,9 @@ router.post(
           address,
           role: Role.RESIDENT,
           accountStatus: AccountStatus.ACTIVE,
-          verificationCode: code,
-          verificationCodeExpiresAt: codeExpiry(),
+          ...(verifyDisabled
+            ? { phoneVerifiedAt: new Date() }
+            : { verificationCode: code!, verificationCodeExpiresAt: codeExpiry() }),
         },
       });
 
@@ -92,7 +101,7 @@ router.post(
         data: {
           user: publicUser(user),
           ...tokens,
-          ...(shouldExposeCode() ? { verificationCode: code } : {}),
+          ...(code && shouldExposeCode() ? { verificationCode: code } : {}),
         },
       });
     } catch (err) {
@@ -116,7 +125,8 @@ router.post(
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
-      const code = generateCode();
+      const verifyDisabled = isPhoneVerificationSkipped();
+      const code = verifyDisabled ? null : generateCode();
       const user = await prisma.user.create({
         data: {
           name,
@@ -126,8 +136,9 @@ router.post(
           address,
           role: Role.RESIDENT,
           accountStatus: AccountStatus.ACTIVE,
-          verificationCode: code,
-          verificationCodeExpiresAt: codeExpiry(),
+          ...(verifyDisabled
+            ? { phoneVerifiedAt: new Date() }
+            : { verificationCode: code!, verificationCodeExpiresAt: codeExpiry() }),
         },
       });
 
@@ -142,7 +153,7 @@ router.post(
         data: {
           user: publicUser(user),
           ...tokens,
-          ...(shouldExposeCode() ? { verificationCode: code } : {}),
+          ...(code && shouldExposeCode() ? { verificationCode: code } : {}),
         },
       });
     } catch (err) {
@@ -203,7 +214,8 @@ router.post(
       }
 
       const hashedPassword = await bcrypt.hash(parsed.password, 10);
-      const code = generateCode();
+      const verifyDisabled = isPhoneVerificationSkipped();
+      const code = verifyDisabled ? null : generateCode();
       const user = await prisma.user.create({
         data: {
           name: parsed.name,
@@ -220,8 +232,9 @@ router.post(
           vehicleCapacityKg: parsed.vehicleCapacityKg,
           maxConcurrentOrders: 5,
           onShift: false,
-          verificationCode: code,
-          verificationCodeExpiresAt: codeExpiry(),
+          ...(verifyDisabled
+            ? { phoneVerifiedAt: new Date() }
+            : { verificationCode: code!, verificationCodeExpiresAt: codeExpiry() }),
         },
       });
 
@@ -238,7 +251,7 @@ router.post(
           user: publicUser(user),
           message:
             'Your application is under review. You will be notified once an admin approves it.',
-          ...(shouldExposeCode() ? { verificationCode: code } : {}),
+          ...(code && shouldExposeCode() ? { verificationCode: code } : {}),
         },
       });
     } catch (err) {
@@ -281,9 +294,17 @@ router.post(
 
 router.post(
   '/verify/resend',
+  authLimiter,
   validate(resendCodeSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      // Refuse resend when verification is operationally disabled (no SMS provider).
+      // We deliberately keep /auth/verify itself working so accounts with an
+      // in-flight code from before the env flip can still complete.
+      if (isPhoneVerificationSkipped()) {
+        throw new AppError('VERIFICATION_DISABLED', 400);
+      }
+
       const { phone } = req.body;
       const user = await prisma.user.findUnique({ where: { phone } });
       if (!user) throw new AppError('Account not found', 404);
@@ -311,6 +332,7 @@ router.post(
 
 router.post(
   '/login',
+  authLimiter,
   validate(loginSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -384,7 +406,7 @@ router.post(
 // Refresh & me
 // ============================================================================
 
-router.post('/refresh', async (req: Request, res: Response, next: NextFunction) => {
+router.post('/refresh', authLimiter, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { refreshToken } = req.body;
     if (!refreshToken) throw new AppError('Refresh token required', 400);

@@ -300,9 +300,40 @@ describe('POST /api/v1/auth/verify/resend', () => {
     }
   });
 
-  // Documents the gap: resend has no per-phone rate limit. Phase 8 will track
-  // this as a security todo.
-  test.todo('resend should be rate-limited (no throttling today)');
+  test('resend is rate-limited after 20 attempts in 15 minutes', async () => {
+    const original = process.env.DISABLE_RATE_LIMIT;
+    delete process.env.DISABLE_RATE_LIMIT;
+    const { resetAuthLimiter } = await import('../../src/middleware/rateLimit');
+    resetAuthLimiter();
+    try {
+      await prisma.user.create({
+        data: {
+          name: 'Throttled',
+          phone: '+996700666999',
+          password: 'hash',
+          role: 'RESIDENT',
+          accountStatus: 'ACTIVE',
+        },
+      });
+      // Burn the 20-attempt window.
+      const responses = [];
+      for (let i = 0; i < 21; i++) {
+        responses.push(
+          await request(app).post('/api/v1/auth/verify/resend').send({ phone: '+996700666999' }),
+        );
+      }
+      // First 20 succeed (200), the 21st is throttled (429).
+      expect(responses.slice(0, 20).every((r) => r.status === 200)).toBe(true);
+      expect(responses[20].status).toBe(429);
+      expect(responses[20].body).toEqual({
+        error: { code: 'RATE_LIMIT', message: 'Too many attempts' },
+      });
+    } finally {
+      resetAuthLimiter();
+      if (original === undefined) delete process.env.DISABLE_RATE_LIMIT;
+      else process.env.DISABLE_RATE_LIMIT = original;
+    }
+  });
 });
 
 describe('POST /api/v1/auth/login', () => {

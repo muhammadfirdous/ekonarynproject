@@ -1,0 +1,35 @@
+# Caddyfile for the single-VPS production deploy (DEPLOYMENT.md §3.6).
+# Caddy auto-issues TLS certs for all four hostnames on first start.
+
+{
+    email admin@ekonaryn.kg
+}
+
+# Public marketing site
+ekonaryn.kg, www.ekonaryn.kg {
+    encode zstd gzip
+    reverse_proxy website:3000
+}
+
+# Admin dashboard
+app.ekonaryn.kg {
+    encode zstd gzip
+    reverse_proxy dashboard:3001
+}
+
+# API + uploads
+api.ekonaryn.kg {
+    encode zstd gzip
+
+    # User-uploaded files served directly from the shared api_uploads
+    # volume (mounted read-only at /srv/uploads in docker-compose.prod.yml).
+    # The handle_path directive matches /uploads/<filename> exactly — Caddy
+    # rejects path traversal attempts as 404 before reaching the disk.
+    handle_path /uploads/* {
+        root * /srv/uploads
+        file_server
+    }
+
+    # Everything else proxies to the Express API.
+    reverse_proxy api:4000
+}

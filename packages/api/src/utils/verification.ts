@@ -25,3 +25,11 @@ export function shouldExposeCode(): boolean {
   // Dev convenience — never expose in production.
   return process.env.NODE_ENV !== 'production';
 }
+
+// First-deploy escape hatch: with no SMS provider integrated, verification
+// codes are generated but never delivered. Setting SKIP_PHONE_VERIFICATION=true
+// makes registration mark new accounts phone-verified immediately, and
+// /auth/verify/resend refuses with VERIFICATION_DISABLED. See DEPLOYMENT.md §0.8.
+export function isPhoneVerificationSkipped(): boolean {
+  return process.env.SKIP_PHONE_VERIFICATION === 'true';
+}
