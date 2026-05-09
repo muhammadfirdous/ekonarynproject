@@ -1,4 +1,8 @@
-FROM node:20-alpine AS base
+FROM node:20-slim AS base
+
+# Prisma needs OpenSSL at runtime; node:20-slim ships without it.
+RUN apt-get update -y && apt-get install -y openssl ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
