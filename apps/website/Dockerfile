@@ -54,4 +54,6 @@ COPY --from=base --chown=app:app /repo/packages/shared/dist \
 
 USER app
 EXPOSE 3000
-CMD ["npx", "next", "start", "-p", "3000"]
+# Honor $PORT when set by the platform (Railway, Fly, etc.); fall back to 3000
+# for local docker-compose runs.
+CMD ["sh", "-c", "npx next start -p ${PORT:-3000}"]

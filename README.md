@@ -257,18 +257,30 @@ see **Production deployment** below.
 
 ## Production deployment
 
-The first production deploy targets a single Hetzner VPS with all
-services running under `docker compose -f docker-compose.prod.yml`,
-fronted by Caddy with auto-TLS. The full architecture, secrets layout,
-backup strategy, and step-by-step runbook live in
-[DEPLOYMENT.md](DEPLOYMENT.md).
+Two supported deploy targets:
 
-Quick reference:
+### Railway (managed PaaS) — [RAILWAY_DEPLOY.md](RAILWAY_DEPLOY.md)
 
-- Production compose: [`docker-compose.prod.yml`](docker-compose.prod.yml)
-- Edge proxy config: [`deploy/Caddyfile`](deploy/Caddyfile)
-- Backup script: [`deploy/scripts/backup.sh`](deploy/scripts/backup.sh)
-- First-admin bootstrap: `npm run admin:create` (see DEPLOYMENT.md §4.2)
+GitHub-integrated auto-deploys, managed Postgres + automatic backups,
+Railway-issued TLS. Lowest operational overhead. Each service runs
+from its existing Dockerfile (`packages/api/Dockerfile`,
+`apps/website/Dockerfile`, `apps/dashboard/Dockerfile`); the
+Dockerfiles honor `$PORT` so Railway's port injection works unchanged.
+
+### Self-hosted Hetzner VPS — [DEPLOYMENT.md](DEPLOYMENT.md)
+
+Single VPS with `docker compose -f docker-compose.prod.yml`, Caddy
+edge proxy with auto-TLS, hand-rolled backup cron. Cheaper but
+requires VPS hardening, ssh hygiene, and patch ownership.
+
+Both paths run the same code from `main`. Pick the runbook that fits.
+
+Common artifacts:
+
+- Production compose (Hetzner): [`docker-compose.prod.yml`](docker-compose.prod.yml)
+- Edge proxy config (Hetzner): [`deploy/Caddyfile`](deploy/Caddyfile)
+- Backup script (Hetzner): [`deploy/scripts/backup.sh`](deploy/scripts/backup.sh)
+- First-admin bootstrap: `npm run admin:create` (both targets)
 - Security policy + reporting: [SECURITY.md](SECURITY.md)
 
 ## Project Structure
