@@ -41,7 +41,7 @@ ekonaryn/
 ### 1. Clone & Install
 
 ```bash
-git clone <repo-url> ekonaryn
+git clone https://github.com/muhammadfirdous/ekonarynproject.git ekonaryn
 cd ekonaryn
 npm install
 ```
